@@ -31,6 +31,8 @@ ViewTooltip
         .autoHide(true / false, 1000)
         .clickToHide(true / false)
         
+        .align(START / CENTER)
+        
         .position(TOP / LEFT / RIGHT / BOTTOM)
         
         .text("The text")
