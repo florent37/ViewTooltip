@@ -1,5 +1,7 @@
 # ViewTooltip
 
+[![screen](https://raw.githubusercontent.com/florent37/ViewTooltip/master/medias/clickToHide.gif)](https://www.github.com/florent37/ViewTooltip)
+
 ```java
 ViewTooltip
         .on(editText)
@@ -19,6 +21,8 @@ dependencies {
 ```
 
 # Methods
+
+[![screen](https://raw.githubusercontent.com/florent37/ViewTooltip/master/medias/autoHide.gif)](https://www.github.com/florent37/ViewTooltip)
 
 ```java
 ViewTooltip

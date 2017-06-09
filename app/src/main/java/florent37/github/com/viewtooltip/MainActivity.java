@@ -25,8 +25,9 @@ public class MainActivity extends AppCompatActivity {
                 ViewTooltip
                         .on(editText)
                         .position(ViewTooltip.Position.LEFT)
-                        .text("Left")
+                        .text("Some tooltip")
                         .clickToHide(true)
+                        .autoHide(false, 0)
                         .animation(new ViewTooltip.FadeTooltipAnimation(500))
                         .onDisplay(new ViewTooltip.ListenerDisplay() {
                             @Override
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 ViewTooltip
                         .on(editText)
                         .position(ViewTooltip.Position.TOP)
-                        .text("Top")
+                        .text("It say hello")
                         .show();
             }
         });
