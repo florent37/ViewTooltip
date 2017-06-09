@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
                 ViewTooltip
                         .on(editText)
                         .position(ViewTooltip.Position.LEFT)
-                        .text("Some tooltip")
+                        .text("Some tooltip with long text")
                         .clickToHide(true)
                         .autoHide(false, 0)
                         .animation(new ViewTooltip.FadeTooltipAnimation(500))
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                         .on(editText)
                         .autoHide(true, 1000)
                         .position(ViewTooltip.Position.RIGHT)
-                        .text("Right")
+                        .text("Some tooltip with long text")
                         .show();
             }
         });
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 ViewTooltip
                         .on(editText)
                         .position(ViewTooltip.Position.TOP)
-                        .text("It say hello")
+                        .text("Some tooltip with long text")
                         .show();
             }
         });
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                         .on(editText)
                         .color(Color.BLACK)
                         .position(ViewTooltip.Position.BOTTOM)
-                        .text("Bottom")
+                        .text("Some tooltip with long text")
                         .show();
             }
         });

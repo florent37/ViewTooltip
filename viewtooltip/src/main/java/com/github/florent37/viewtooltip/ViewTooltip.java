@@ -42,6 +42,11 @@ public class ViewTooltip {
         return this;
     }
 
+    public ViewTooltip align(ALIGN align) {
+        this.tooltip_view.setAlign(align);
+        return this;
+    }
+
     public void show() {
         final ViewGroup decorView = (ViewGroup) ((Activity) view.getContext()).getWindow().getDecorView();
         view.postDelayed(new Runnable() {
@@ -55,24 +60,7 @@ public class ViewTooltip {
                 tooltip_view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                     @Override
                     public boolean onPreDraw() {
-                        switch (tooltip_view.position) {
-                            case LEFT:
-                                tooltip_view.setTranslationY(rect.top);
-                                tooltip_view.setTranslationX(rect.left - tooltip_view.getWidth());
-                                break;
-                            case RIGHT:
-                                tooltip_view.setTranslationY(rect.top);
-                                tooltip_view.setTranslationX(rect.right);
-                                break;
-                            case BOTTOM:
-                                tooltip_view.setTranslationY(rect.bottom);
-                                tooltip_view.setTranslationX(rect.left);
-                                break;
-                            case TOP:
-                                tooltip_view.setTranslationY(rect.top - tooltip_view.getHeight());
-                                tooltip_view.setTranslationX(rect.left);
-                                break;
-                        }
+                        tooltip_view.setupPosition(rect);
 
                         tooltip_view.startEnterAnimation();
 
@@ -150,6 +138,11 @@ public class ViewTooltip {
         BOTTOM,
     }
 
+    public enum ALIGN {
+        START,
+        CENTER,
+    }
+
     public interface TooltipAnimation {
         void animateEnter(View view, Animator.AnimatorListener animatorListener);
 
@@ -196,6 +189,7 @@ public class ViewTooltip {
         private Path bubblePath;
         private Paint bubblePaint;
         private Position position = Position.BOTTOM;
+        private ALIGN align = ALIGN.CENTER;
         private boolean clickToHide;
         private boolean autoHide = true;
         private long duration = 4000;
@@ -233,6 +227,11 @@ public class ViewTooltip {
 
         public void setPosition(@NonNull Position position) {
             this.position = position;
+            postInvalidate();
+        }
+
+        public void setAlign(ALIGN align) {
+            this.align = align;
             postInvalidate();
         }
 
@@ -404,6 +403,67 @@ public class ViewTooltip {
 
         public void setAutoHide(boolean autoHide) {
             this.autoHide = autoHide;
+        }
+
+        public void setupPosition(Rect rect) {
+
+            if (position == Position.LEFT || position == Position.RIGHT){
+
+                final int myHeight = getHeight();
+                final int hisHeight = rect.height();
+
+                final int maxHeight = Math.max(hisHeight, myHeight);
+                final int minHeight = Math.min(hisHeight, myHeight);
+
+                int spacingY = 0;
+                switch (align){
+                    case START:
+                        spacingY = 0;
+                        break;
+                    //case END:
+                    //    spacingY = maxHeight - minHeight;
+                    //    break;
+                    case CENTER:
+                        spacingY = (int)(-1f * maxHeight / 2f  + minHeight / 2f);
+                        break;
+                }
+
+                if(position == Position.LEFT){
+                    setTranslationY(rect.top + spacingY);
+                    setTranslationX(rect.left - getWidth());
+                } else {
+                    setTranslationY(rect.top + spacingY);
+                    setTranslationX(rect.right);
+                }
+
+            } else {
+                final int myWidth = getWidth();
+                final int hisWidth = rect.width();
+
+                final int maxWidth = Math.max(hisWidth, myWidth);
+                final int minWidth = Math.min(hisWidth, myWidth);
+
+                int spacingX;
+                switch (align){
+                    //case END:
+                    //    spacingX = maxWidth - minWidth;
+                    //    break;
+                    case CENTER:
+                        spacingX = (int)(-1f * maxWidth / 2f  + minWidth / 2f);
+                        break;
+                    default:
+                        spacingX = 0;
+                        break;
+                }
+
+                if(position == Position.BOTTOM){
+                    setTranslationY(rect.bottom);
+                    setTranslationX(rect.left + spacingX);
+                } else {
+                    setTranslationY(rect.top - getHeight());
+                    setTranslationX(rect.left + spacingX);
+                }
+            }
         }
     }
 
