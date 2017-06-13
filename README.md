@@ -6,6 +6,7 @@
 ViewTooltip
         .on(editText)
         .autoHide(true, 1000)
+        .corner(30)
         .position(ViewTooltip.Position.RIGHT)
         .text("Right")
         .show();
@@ -16,7 +17,7 @@ ViewTooltip
 [ ![Download](https://api.bintray.com/packages/florent37/maven/viewtooltip/images/download.svg) ](https://bintray.com/florent37/maven/viewtooltip/_latestVersion)
 ```java
 dependencies {
-    compile 'com.github.florent37:viewtooltip:1.0.1'
+    compile 'com.github.florent37:viewtooltip:1.0.2'
 }
 ```
 
@@ -56,6 +57,10 @@ ViewTooltip
         .show();
 ```
 
+# History
+
+## 1.0.2
+- Added corner
 
 # Credits   
 

@@ -106,6 +106,11 @@ public class ViewTooltip {
         return this;
     }
 
+    public ViewTooltip corner(int corner) {
+        this.tooltip_view.setCorner(corner);
+        return this;
+    }
+
     public ViewTooltip textColor(@ColorInt int textColor) {
         this.tooltip_view.setTextColor(textColor);
         return this;
@@ -203,6 +208,8 @@ public class ViewTooltip {
 
         private TooltipAnimation tooltipAnimation = new FadeTooltipAnimation();
 
+        private int corner = 30;
+
         public ViewTooltip_view(@NonNull Context context) {
             super(context);
             setWillNotDraw(false);
@@ -260,12 +267,17 @@ public class ViewTooltip {
             this.clickToHide = clickToHide;
         }
 
+        public void setCorner(int corner) {
+            this.corner = corner;
+        }
+
         @Override
         protected void onSizeChanged(int width, int height, int oldw, int oldh) {
             super.onSizeChanged(width, height, oldw, oldh);
 
-            bubblePath = new Path();
+            bubblePath = drawBubble(new RectF(0, 0, width, height), corner, corner, corner, corner);
 
+            /*
             float x = 0;
             float y = 0;
 
@@ -316,7 +328,7 @@ public class ViewTooltip {
                     bubblePath.close();
                 }
                 break;
-            }
+            }*/
         }
 
         @Override
@@ -366,18 +378,18 @@ public class ViewTooltip {
         }
 
         protected void handleAutoRemove() {
-            if(clickToHide){
+            if (clickToHide) {
                 setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(clickToHide){
+                        if (clickToHide) {
                             remove();
                         }
                     }
                 });
             }
 
-            if(autoHide){
+            if (autoHide) {
                 postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -408,7 +420,7 @@ public class ViewTooltip {
 
         public void setupPosition(Rect rect) {
 
-            if (position == Position.LEFT || position == Position.RIGHT){
+            if (position == Position.LEFT || position == Position.RIGHT) {
 
                 final int myHeight = getHeight();
                 final int hisHeight = rect.height();
@@ -417,7 +429,7 @@ public class ViewTooltip {
                 final int minHeight = Math.min(hisHeight, myHeight);
 
                 int spacingY = 0;
-                switch (align){
+                switch (align) {
                     case START:
                         spacingY = 0;
                         break;
@@ -425,11 +437,11 @@ public class ViewTooltip {
                     //    spacingY = maxHeight - minHeight;
                     //    break;
                     case CENTER:
-                        spacingY = (int)(-1f * maxHeight / 2f  + minHeight / 2f);
+                        spacingY = (int) (-1f * maxHeight / 2f + minHeight / 2f);
                         break;
                 }
 
-                if(position == Position.LEFT){
+                if (position == Position.LEFT) {
                     setTranslationY(rect.top + spacingY);
                     setTranslationX(rect.left - getWidth());
                 } else {
@@ -445,19 +457,19 @@ public class ViewTooltip {
                 final int minWidth = Math.min(hisWidth, myWidth);
 
                 int spacingX;
-                switch (align){
+                switch (align) {
                     //case END:
                     //    spacingX = maxWidth - minWidth;
                     //    break;
                     case CENTER:
-                        spacingX = (int)(-1f * maxWidth / 2f  + minWidth / 2f);
+                        spacingX = (int) (-1f * maxWidth / 2f + minWidth / 2f);
                         break;
                     default:
                         spacingX = 0;
                         break;
                 }
 
-                if(position == Position.BOTTOM){
+                if (position == Position.BOTTOM) {
                     setTranslationY(rect.bottom);
                     setTranslationX(rect.left + spacingX);
                 } else {
@@ -466,28 +478,71 @@ public class ViewTooltip {
                 }
             }
         }
+
+
+        private Path drawBubble(RectF rect, float topLeftDiameter, float topRightDiameter, float bottomRightDiameter, float bottomLeftDiameter) {
+            final Path path = new Path();
+
+            topLeftDiameter = topLeftDiameter < 0 ? 0 : topLeftDiameter;
+            topRightDiameter = topRightDiameter < 0 ? 0 : topRightDiameter;
+            bottomLeftDiameter = bottomLeftDiameter < 0 ? 0 : bottomLeftDiameter;
+            bottomRightDiameter = bottomRightDiameter < 0 ? 0 : bottomRightDiameter;
+
+            final float spacingLeft = this.position == Position.RIGHT ? ARROW_HEIGHT : 0;
+            final float spacingTop = this.position == Position.BOTTOM ? ARROW_HEIGHT : 0;
+            final float spacingRight = this.position == Position.LEFT ? ARROW_HEIGHT : 0;
+            final float spacingBottom = this.position == Position.TOP ? ARROW_HEIGHT : 0;
+
+            final float left = spacingLeft + rect.left;
+            final float top = spacingTop + rect.top;
+            final float right = rect.right - spacingRight;
+            final float bottom = rect.bottom - spacingBottom;
+
+            path.moveTo(left + topLeftDiameter / 2f, top);
+            //LEFT, TOP
+
+            if (position == Position.BOTTOM) {
+                path.lineTo((right - topRightDiameter / 2f) / 2f - ARROW_WIDTH, top);
+                path.lineTo((right - topRightDiameter / 2f) / 2f, rect.top);
+                path.lineTo((right - topRightDiameter / 2f) / 2f + ARROW_WIDTH, top);
+            }
+            path.lineTo(right - topRightDiameter / 2f, top);
+
+            path.quadTo(right, top, right, top + topRightDiameter / 2);
+            //RIGHT, TOP
+
+            if (position == Position.LEFT) {
+                path.lineTo(right, bottom / 2f - ARROW_WIDTH);
+                path.lineTo(rect.right, bottom / 2f);
+                path.lineTo(right, bottom / 2f + ARROW_WIDTH);
+            }
+            path.lineTo(right, bottom - bottomRightDiameter / 2);
+
+            path.quadTo(right, bottom, right - bottomRightDiameter / 2, bottom);
+            //RIGHT, BOTTOM
+
+            if (position == Position.TOP) {
+                path.lineTo(right / 2f + ARROW_WIDTH, bottom);
+                path.lineTo(right / 2f, rect.bottom);
+                path.lineTo(right / 2f - ARROW_WIDTH, bottom);
+            }
+            path.lineTo(left + bottomLeftDiameter / 2, bottom);
+
+            path.quadTo(left, bottom, left, bottom - bottomLeftDiameter / 2);
+            //LEFT, BOTTOM
+
+            if (position == Position.RIGHT) {
+                path.lineTo(left, bottom / 2f + ARROW_WIDTH);
+                path.lineTo(rect.left, bottom / 2f);
+                path.lineTo(left, bottom / 2f - ARROW_WIDTH);
+            }
+            path.lineTo(left, top + topLeftDiameter / 2);
+
+            path.quadTo(left, top, left + topLeftDiameter / 2, top);
+
+            path.close();
+
+            return path;
+        }
     }
-
-    private static Path drawBubble(RectF rect, float topLeftDiameter, float topRightDiameter, float bottomRightDiameter, float bottomLeftDiameter){
-        Path path = new Path();
-
-        topLeftDiameter = topLeftDiameter < 0 ? 0 : topLeftDiameter;
-        topRightDiameter = topRightDiameter < 0 ? 0 : topRightDiameter;
-        bottomLeftDiameter = bottomLeftDiameter < 0 ? 0 : bottomLeftDiameter;
-        bottomRightDiameter = bottomRightDiameter < 0 ? 0 : bottomRightDiameter;
-
-        path.moveTo(rect.left + topLeftDiameter/2 ,rect.top);
-        path.lineTo(rect.right - topRightDiameter/2,rect.top);
-        path.quadTo(rect.right, rect.top, rect.right, rect.top + topRightDiameter/2);
-        path.lineTo(rect.right ,rect.bottom - bottomRightDiameter/2);
-        path.quadTo(rect.right ,rect.bottom, rect.right - bottomRightDiameter/2, rect.bottom);
-        path.lineTo(rect.left + bottomLeftDiameter/2,rect.bottom);
-        path.quadTo(rect.left,rect.bottom,rect.left, rect.bottom - bottomLeftDiameter/2);
-        path.lineTo(rect.left,rect.top + topLeftDiameter/2);
-        path.quadTo(rect.left,rect.top, rect.left + topLeftDiameter/2, rect.top);
-        path.close();
-
-        return path;
-    }
-
 }
