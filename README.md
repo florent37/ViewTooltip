@@ -17,7 +17,7 @@ ViewTooltip
 [ ![Download](https://api.bintray.com/packages/florent37/maven/viewtooltip/images/download.svg) ](https://bintray.com/florent37/maven/viewtooltip/_latestVersion)
 ```java
 dependencies {
-    compile 'com.github.florent37:viewtooltip:1.0.2'
+    compile 'com.github.florent37:viewtooltip:1.0.3'
 }
 ```
 
@@ -58,6 +58,9 @@ ViewTooltip
 ```
 
 # History
+
+## 1.0.3
+- Clip tooltip to screen width
 
 ## 1.0.2
 - Added corner

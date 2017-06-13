@@ -61,13 +61,10 @@ public class ViewTooltip {
                 tooltip_view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                     @Override
                     public boolean onPreDraw() {
-                        tooltip_view.setupPosition(rect);
 
-                        tooltip_view.startEnterAnimation();
+                        tooltip_view.setup(rect, decorView.getWidth());
 
                         tooltip_view.getViewTreeObserver().removeOnPreDrawListener(this);
-
-                        tooltip_view.handleAutoRemove();
 
                         return false;
                     }
@@ -543,6 +540,45 @@ public class ViewTooltip {
             path.close();
 
             return path;
+        }
+
+        public boolean adjustSize(Rect rect, int screenWidth) {
+            boolean changed = false;
+            final ViewGroup.LayoutParams layoutParams = getLayoutParams();
+            if(position == Position.LEFT && getWidth() > rect.left) {
+                layoutParams.width = rect.left;
+                changed = true;
+            } else if(position == Position.RIGHT && rect.right + getWidth() > screenWidth){
+                layoutParams.width = screenWidth - rect.right;
+                changed = true;
+            }
+            setLayoutParams(layoutParams);
+            postInvalidate();
+            return changed;
+        }
+
+        private void onSetup(Rect rect){
+            setupPosition(rect);
+
+            startEnterAnimation();
+
+            handleAutoRemove();
+        }
+
+        public void setup(final Rect rect, int screenWidth) {
+            final boolean changed = adjustSize(rect, screenWidth);
+            if(!changed) {
+                onSetup(rect);
+            } else {
+                getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        onSetup(rect);
+                        getViewTreeObserver().removeOnPreDrawListener(this);
+                        return false;
+                    }
+                });
+            }
         }
     }
 }
