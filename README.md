@@ -62,7 +62,7 @@ ViewTooltip
 # Prevent view to not be outside screen
 
 ViewTooltip will not allow to be outside of screen,
-it will automatically adjust hist size
+it will automatically adjust his size
 
 [![screen](https://raw.githubusercontent.com/florent37/ViewTooltip/master/medias/clip_screen_large.gif)](https://www.github.com/florent37/ViewTooltip)
 
