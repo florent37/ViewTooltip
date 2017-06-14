@@ -1,6 +1,6 @@
 # ViewTooltip
 
-[![screen](https://raw.githubusercontent.com/florent37/ViewTooltip/master/medias/clickToHide.gif)](https://www.github.com/florent37/ViewTooltip)
+[![screen](https://raw.githubusercontent.com/florent37/ViewTooltip/master/medias/with_border.gif)](https://www.github.com/florent37/ViewTooltip)
 
 ```java
 ViewTooltip
@@ -38,6 +38,8 @@ ViewTooltip
         
         .text("The text")
         
+        .corner(10)
+        
         //change the opening animation
         .animation(new ViewTooltip.TooltipAnimation(){...})
         
@@ -56,6 +58,13 @@ ViewTooltip
         })
         .show();
 ```
+
+# Prevent view to not be outside screen
+
+ViewTooltip will not allow to be outside of screen,
+it will automatically adjust hist size
+
+[![screen](https://raw.githubusercontent.com/florent37/ViewTooltip/master/medias/clip_screen_large.gif)](https://www.github.com/florent37/ViewTooltip)
 
 # History
 

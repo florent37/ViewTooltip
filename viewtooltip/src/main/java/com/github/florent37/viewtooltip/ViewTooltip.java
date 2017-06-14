@@ -185,6 +185,7 @@ public class ViewTooltip {
 
     private static class ViewTooltip_view extends FrameLayout {
 
+        private static final int MARGIN_SCREEN_BORDER_TOOLTIP = 30;
         private final int ARROW_HEIGHT = 15;
         private final int ARROW_WIDTH = 15;
         protected TextView textView;
@@ -546,10 +547,10 @@ public class ViewTooltip {
             boolean changed = false;
             final ViewGroup.LayoutParams layoutParams = getLayoutParams();
             if(position == Position.LEFT && getWidth() > rect.left) {
-                layoutParams.width = rect.left;
+                layoutParams.width = rect.left - MARGIN_SCREEN_BORDER_TOOLTIP;
                 changed = true;
             } else if(position == Position.RIGHT && rect.right + getWidth() > screenWidth){
-                layoutParams.width = screenWidth - rect.right;
+                layoutParams.width = screenWidth - rect.right - MARGIN_SCREEN_BORDER_TOOLTIP;
                 changed = true;
             }
             setLayoutParams(layoutParams);
