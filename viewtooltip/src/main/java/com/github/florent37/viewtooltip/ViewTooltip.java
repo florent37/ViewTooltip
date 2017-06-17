@@ -223,6 +223,7 @@ public class ViewTooltip {
 
         public void setColor(int color) {
             this.color = color;
+            bubblePaint.setColor(color);
             postInvalidate();
         }
 
@@ -392,13 +393,15 @@ public class ViewTooltip {
             }
         }
 
-        private void remove() {
+        public void remove() {
             startExitAnimation(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
-                    final ViewGroup parent = ((ViewGroup) getParent());
-                    parent.removeView(ViewTooltip_view.this);
+                    if (getParent() != null) {
+                        final ViewGroup parent = ((ViewGroup) getParent());
+                        parent.removeView(ViewTooltip_view.this);
+                    }
                 }
             });
         }

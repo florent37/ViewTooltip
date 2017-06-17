@@ -24,6 +24,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 ViewTooltip
                         .on(editText)
+                        .color(Color.BLACK)
                         .position(ViewTooltip.Position.LEFT)
                         .text("Some tooltip with long text")
                         .clickToHide(true)
