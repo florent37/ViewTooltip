@@ -48,7 +48,7 @@ public class ViewTooltip {
         return this;
     }
 
-    public void show() {
+    public ViewTooltip_view show() {
         final ViewGroup decorView = (ViewGroup) ((Activity) view.getContext()).getWindow().getDecorView();
         view.postDelayed(new Runnable() {
             @Override
@@ -71,6 +71,7 @@ public class ViewTooltip {
                 });
             }
         }, 100);
+        return tooltip_view;
     }
 
     public ViewTooltip duration(long duration) {
