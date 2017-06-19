@@ -16,13 +16,13 @@ allprojects {
 }
 
 ext{
-    COMPILE_SDK=25
-    TARGET_SDK=25
+    COMPILE_SDK=19
+    TARGET_SDK=19
     BUILD_TOOL = "25.0.0"
     minSdkVersion = 14
     sourceCompatibilityVersion = JavaVersion.VERSION_1_7
     targetCompatibilityVersion = JavaVersion.VERSION_1_7
-    supportVersion = "25.0.0"
+    supportVersion = "19.0.0"
 
-    libraryVersion = "1.0.3"
+    libraryVersion = "1.0.4"
 }
