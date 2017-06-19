@@ -17,7 +17,7 @@ ViewTooltip
 [ ![Download](https://api.bintray.com/packages/florent37/maven/viewtooltip/images/download.svg) ](https://bintray.com/florent37/maven/viewtooltip/_latestVersion)
 ```java
 dependencies {
-    compile 'com.github.florent37:viewtooltip:1.0.4'
+    compile 'com.github.florent37:viewtooltip:1.0.5'
 }
 ```
 
@@ -67,6 +67,10 @@ it will automatically adjust hist size
 [![screen](https://raw.githubusercontent.com/florent37/ViewTooltip/master/medias/clip_screen_large.gif)](https://www.github.com/florent37/ViewTooltip)
 
 # History
+
+## 1.0.5
+- .customView()
+- .remove()
 
 ## 1.0.3
 - Clip tooltip to screen width

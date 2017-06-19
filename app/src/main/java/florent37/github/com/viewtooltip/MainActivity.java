@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.github.florent37.viewtooltip.ViewTooltip;
@@ -22,9 +23,12 @@ public class MainActivity extends Activity {
         findViewById(R.id.left).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final CheckBox customView = new CheckBox(MainActivity.this);
+                //customView.setText("test");
                 ViewTooltip
                         .on(editText)
                         .color(Color.BLACK)
+                        .customView(customView)
                         .position(ViewTooltip.Position.LEFT)
                         .text("Some tooltip with long text")
                         .clickToHide(true)

@@ -40,12 +40,22 @@ public class ViewTooltip {
         return this;
     }
 
+    public ViewTooltip customView(View customView){
+        this.tooltip_view.setCustomView(customView);
+        return this;
+    }
+
+    public ViewTooltip customView(int viewId){
+        this.tooltip_view.setCustomView(((Activity) view.getContext()).findViewById(viewId));
+        return this;
+    }
+
     public ViewTooltip align(ALIGN align) {
         this.tooltip_view.setAlign(align);
         return this;
     }
 
-    public void show() {
+    public ViewTooltip_view show() {
         final ViewGroup decorView = (ViewGroup) ((Activity) view.getContext()).getWindow().getDecorView();
         view.postDelayed(new Runnable() {
             @Override
@@ -68,6 +78,7 @@ public class ViewTooltip {
                 });
             }
         }, 100);
+        return tooltip_view;
     }
 
     public ViewTooltip duration(long duration) {
@@ -185,7 +196,7 @@ public class ViewTooltip {
         private static final int MARGIN_SCREEN_BORDER_TOOLTIP = 30;
         private final int ARROW_HEIGHT = 15;
         private final int ARROW_WIDTH = 15;
-        protected TextView textView;
+        protected View childView;
         private int color = Color.parseColor("#3F51B5");
         private Path bubblePath;
         private Paint bubblePaint;
@@ -207,18 +218,23 @@ public class ViewTooltip {
             super(context);
             setWillNotDraw(false);
 
-            this.textView = new TextView(getContext());
-            addView(textView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            this.childView = new TextView(getContext());
+            ((TextView) childView).setTextColor(Color.WHITE);
+            addView(childView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
             bubblePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             bubblePaint.setColor(color);
             bubblePaint.setStyle(Paint.Style.FILL);
 
-            textView.setTextColor(Color.WHITE);
-
             int paddingHorizontal = 40 + ARROW_HEIGHT;
             int paddingVertical = 20 + ARROW_HEIGHT;
             setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical);
+        }
+
+        public void setCustomView(View customView) {
+            this.removeView(childView);
+            this.childView = customView;
+            addView(childView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
         public void setColor(int color) {
@@ -238,22 +254,30 @@ public class ViewTooltip {
         }
 
         public void setText(String text) {
-            this.textView.setText(text);
+            if (childView instanceof TextView) {
+                ((TextView) this.childView).setText(text);
+            }
             postInvalidate();
         }
 
         public void setTextColor(int textColor) {
-            this.textView.setTextColor(textColor);
+            if (childView instanceof TextView) {
+                ((TextView) this.childView).setTextColor(textColor);
+            }
             postInvalidate();
         }
 
         public void setTextTypeFace(Typeface textTypeFace) {
-            this.textView.setTypeface(textTypeFace);
+            if (childView instanceof TextView) {
+                ((TextView) this.childView).setTypeface(textTypeFace);
+            }
             postInvalidate();
         }
 
         public void setTextSize(int unit, float size) {
-            this.textView.setTextSize(unit, size);
+            if (childView instanceof TextView) {
+                ((TextView) this.childView).setTextSize(unit, size);
+            }
             postInvalidate();
         }
 
@@ -544,11 +568,14 @@ public class ViewTooltip {
         public boolean adjustSize(Rect rect, int screenWidth) {
             boolean changed = false;
             final ViewGroup.LayoutParams layoutParams = getLayoutParams();
-            if(position == Position.LEFT && getWidth() > rect.left) {
+            if (position == Position.LEFT && getWidth() > rect.left) {
                 layoutParams.width = rect.left - MARGIN_SCREEN_BORDER_TOOLTIP;
                 changed = true;
-            } else if(position == Position.RIGHT && rect.right + getWidth() > screenWidth){
+            } else if (position == Position.RIGHT && rect.right + getWidth() > screenWidth) {
                 layoutParams.width = screenWidth - rect.right - MARGIN_SCREEN_BORDER_TOOLTIP;
+                changed = true;
+            } else if (position == Position.TOP || position == Position.BOTTOM) {
+                layoutParams.width = Math.max(screenWidth / 2, layoutParams.width);
                 changed = true;
             }
             setLayoutParams(layoutParams);
@@ -556,7 +583,7 @@ public class ViewTooltip {
             return changed;
         }
 
-        private void onSetup(Rect rect){
+        private void onSetup(Rect rect) {
             setupPosition(rect);
 
             startEnterAnimation();
@@ -566,7 +593,7 @@ public class ViewTooltip {
 
         public void setup(final Rect rect, int screenWidth) {
             final boolean changed = adjustSize(rect, screenWidth);
-            if(!changed) {
+            if (!changed) {
                 onSetup(rect);
             } else {
                 getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
