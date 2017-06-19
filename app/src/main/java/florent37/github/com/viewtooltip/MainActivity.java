@@ -23,12 +23,12 @@ public class MainActivity extends Activity {
         findViewById(R.id.left).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final CheckBox customView = new CheckBox(MainActivity.this);
+                //final CheckBox customView = new CheckBox(MainActivity.this);
                 //customView.setText("test");
                 ViewTooltip
                         .on(editText)
                         .color(Color.BLACK)
-                        .customView(customView)
+                       // .customView(customView)
                         .position(ViewTooltip.Position.LEFT)
                         .text("Some tooltip with long text")
                         .clickToHide(true)
