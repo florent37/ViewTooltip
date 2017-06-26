@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -26,9 +27,19 @@ public class ViewTooltip {
     private final View view;
     private final ViewTooltip_view tooltip_view;
 
+    public Activity getActivityContext(Context context) {
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) {
+                return (Activity) context;
+            }
+            context = ((ContextWrapper)context).getBaseContext();
+        }
+        return null;
+    }
+
     private ViewTooltip(View view) {
         this.view = view;
-        this.tooltip_view = new ViewTooltip_view(view.getContext());
+        this.tooltip_view = new ViewTooltip_view(getActivityContext(view.getContext()));
     }
 
     public static ViewTooltip on(final View view) {
@@ -56,28 +67,31 @@ public class ViewTooltip {
     }
 
     public ViewTooltip_view show() {
-        final ViewGroup decorView = (ViewGroup) ((Activity) view.getContext()).getWindow().getDecorView();
-        view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                final Rect rect = new Rect();
-                view.getGlobalVisibleRect(rect);
+        final Context activityContext = tooltip_view.getContext();
+        if (activityContext != null && activityContext instanceof Activity) {
+            final ViewGroup decorView = (ViewGroup) ((Activity) activityContext).getWindow().getDecorView();
+            view.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    final Rect rect = new Rect();
+                    view.getGlobalVisibleRect(rect);
 
-                decorView.addView(tooltip_view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    decorView.addView(tooltip_view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-                tooltip_view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                    @Override
-                    public boolean onPreDraw() {
+                    tooltip_view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
 
-                        tooltip_view.setup(rect, decorView.getWidth());
+                            tooltip_view.setup(rect, decorView.getWidth());
 
-                        tooltip_view.getViewTreeObserver().removeOnPreDrawListener(this);
+                            tooltip_view.getViewTreeObserver().removeOnPreDrawListener(this);
 
-                        return false;
-                    }
-                });
-            }
-        }, 100);
+                            return false;
+                        }
+                    });
+                }
+            }, 100);
+        }
         return tooltip_view;
     }
 
@@ -191,7 +205,7 @@ public class ViewTooltip {
         }
     }
 
-    private static class ViewTooltip_view extends FrameLayout {
+    public static class ViewTooltip_view extends FrameLayout {
 
         private static final int MARGIN_SCREEN_BORDER_TOOLTIP = 30;
         private final int ARROW_HEIGHT = 15;
@@ -218,7 +232,7 @@ public class ViewTooltip {
             super(context);
             setWillNotDraw(false);
 
-            this.childView = new TextView(getContext());
+            this.childView = new TextView(context);
             ((TextView) childView).setTextColor(Color.WHITE);
             addView(childView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -226,9 +240,10 @@ public class ViewTooltip {
             bubblePaint.setColor(color);
             bubblePaint.setStyle(Paint.Style.FILL);
 
-            int paddingHorizontal = 40 + ARROW_HEIGHT;
-            int paddingVertical = 20 + ARROW_HEIGHT;
-            setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical);
+            int paddingHorizontal = 20 + ARROW_HEIGHT;
+            int paddingBottom = 5;
+            int paddingTop = paddingBottom + ARROW_HEIGHT;
+            setPadding(paddingHorizontal, paddingTop, paddingHorizontal, paddingBottom);
         }
 
         public void setCustomView(View customView) {
