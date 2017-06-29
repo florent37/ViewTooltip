@@ -497,7 +497,7 @@ public class ViewTooltip {
                     //    spacingX = maxWidth - minWidth;
                     //    break;
                     case CENTER:
-                        spacingX = (int) (-1f * maxWidth / 2f + minWidth / 2f);
+                        spacingX = (int) (1f * maxWidth / 2f - minWidth / 2f);
                         break;
                     default:
                         spacingX = 0;
