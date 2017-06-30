@@ -80,8 +80,8 @@ public class MainActivity extends Activity {
                         .on(editText)
                         .color(Color.BLACK)
                         .position(ViewTooltip.Position.BOTTOM)
-                        .align(ViewTooltip.ALIGN.CENTER)
-                        .text("a")
+                        .align(ViewTooltip.ALIGN.START)
+                        .text("abcdefg")
                         .show();
             }
         });
