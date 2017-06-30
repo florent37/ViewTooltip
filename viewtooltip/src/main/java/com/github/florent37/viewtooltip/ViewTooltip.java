@@ -27,16 +27,6 @@ public class ViewTooltip {
     private final View view;
     private final ViewTooltip_view tooltip_view;
 
-    public Activity getActivityContext(Context context) {
-        while (context instanceof ContextWrapper) {
-            if (context instanceof Activity) {
-                return (Activity) context;
-            }
-            context = ((ContextWrapper)context).getBaseContext();
-        }
-        return null;
-    }
-
     private ViewTooltip(View view) {
         this.view = view;
         this.tooltip_view = new ViewTooltip_view(getActivityContext(view.getContext()));
@@ -46,17 +36,27 @@ public class ViewTooltip {
         return new ViewTooltip(view);
     }
 
+    public Activity getActivityContext(Context context) {
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) {
+                return (Activity) context;
+            }
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return null;
+    }
+
     public ViewTooltip position(Position position) {
         this.tooltip_view.setPosition(position);
         return this;
     }
 
-    public ViewTooltip customView(View customView){
+    public ViewTooltip customView(View customView) {
         this.tooltip_view.setCustomView(customView);
         return this;
     }
 
-    public ViewTooltip customView(int viewId){
+    public ViewTooltip customView(int viewId) {
         this.tooltip_view.setCustomView(((Activity) view.getContext()).findViewById(viewId));
         return this;
     }
@@ -75,6 +75,11 @@ public class ViewTooltip {
                 public void run() {
                     final Rect rect = new Rect();
                     view.getGlobalVisibleRect(rect);
+
+                    int[] location = new int[2];
+                    view.getLocationOnScreen(location);
+                    rect.left = location[0];
+                    //rect.left = location[0];
 
                     decorView.addView(tooltip_view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -211,7 +216,7 @@ public class ViewTooltip {
         private final int ARROW_HEIGHT = 15;
         private final int ARROW_WIDTH = 15;
         protected View childView;
-        private int color = Color.parseColor("#3F51B5");
+        private int color = Color.parseColor("#1F7C82");
         private Path bubblePath;
         private Paint bubblePaint;
         private Position position = Position.BOTTOM;
@@ -485,23 +490,13 @@ public class ViewTooltip {
                 }
 
             } else {
+                int spacingX = 0;
+
                 final int myWidth = getWidth();
                 final int hisWidth = rect.width();
 
-                final int maxWidth = Math.max(hisWidth, myWidth);
-                final int minWidth = Math.min(hisWidth, myWidth);
-
-                int spacingX;
-                switch (align) {
-                    //case END:
-                    //    spacingX = maxWidth - minWidth;
-                    //    break;
-                    case CENTER:
-                        spacingX = (int) (-1f * maxWidth / 2f + minWidth / 2f);
-                        break;
-                    default:
-                        spacingX = 0;
-                        break;
+                if (align == ALIGN.CENTER) {
+                    spacingX = (int) (hisWidth / 2f - 1f * myWidth / 2f);
                 }
 
                 if (position == Position.BOTTOM) {
@@ -590,7 +585,7 @@ public class ViewTooltip {
                 layoutParams.width = screenWidth - rect.right - MARGIN_SCREEN_BORDER_TOOLTIP;
                 changed = true;
             } else if (position == Position.TOP || position == Position.BOTTOM) {
-                layoutParams.width = Math.max(screenWidth / 2, layoutParams.width);
+                layoutParams.width = Math.min(screenWidth / 2, layoutParams.width);
                 changed = true;
             }
             setLayoutParams(layoutParams);
