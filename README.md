@@ -68,6 +68,9 @@ it will automatically adjust his size
 
 # History
 
+## 1.0.6 
+- Fix align 
+
 ## 1.0.5
 - .customView()
 - .remove()
