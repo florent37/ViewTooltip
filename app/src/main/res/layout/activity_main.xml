@@ -8,9 +8,16 @@
     tools:layout_editor_absoluteY="81dp"
     tools:layout_editor_absoluteX="0dp">
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:focusable="true">
+        <requestFocus/>
+    </LinearLayout>
+
     <EditText
         android:id="@+id/editText"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!"
         android:layout_gravity="center"
@@ -55,5 +62,21 @@
             />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/bottomRight"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="br"/>
+
+    <Button
+        android:id="@+id/bottomLeft"
+        android:layout_gravity="bottom|left"
+        android:layout_margin="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="br"/>
 
 </FrameLayout>

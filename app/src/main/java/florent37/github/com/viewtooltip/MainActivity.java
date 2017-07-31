@@ -1,16 +1,15 @@
 package florent37.github.com.viewtooltip;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
 import com.github.florent37.viewtooltip.ViewTooltip;
 
-public class MainActivity extends Activity {
-
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +77,37 @@ public class MainActivity extends Activity {
                 final ViewTooltip.TooltipView viewTooltip = ViewTooltip
                         .on(editText)
                         .color(Color.BLACK)
-                        .padding(20, 20)
+                        .padding(20, 20, 20, 20)
                         .position(ViewTooltip.Position.BOTTOM)
                         .align(ViewTooltip.ALIGN.START)
                         .text("abcdefg")
                         .show();
 
-                viewTooltip.close();
+                //viewTooltip.close();
+            }
+        });
+
+        findViewById(R.id.bottomRight).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewTooltip
+                        .on(v)
+                        .color(Color.BLACK)
+                        .position(ViewTooltip.Position.TOP)
+                        .text("bottomRight bottomRight bottomRight")
+                        .show();
+            }
+        });
+
+        findViewById(R.id.bottomLeft).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewTooltip
+                        .on(v)
+                        .color(Color.BLACK)
+                        .position(ViewTooltip.Position.TOP)
+                        .text("bottomLeft bottomLeft bottomLeft")
+                        .show();
             }
         });
     }
