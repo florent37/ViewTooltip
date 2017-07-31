@@ -245,10 +245,9 @@ public class ViewTooltip {
             bubblePaint.setColor(color);
             bubblePaint.setStyle(Paint.Style.FILL);
 
-            int paddingHorizontal = 20 + ARROW_HEIGHT;
-            int paddingBottom = 5;
-            int paddingTop = paddingBottom + ARROW_HEIGHT;
-            setPadding(paddingHorizontal, paddingTop, paddingHorizontal, paddingBottom);
+            int paddingHorizontal = 30 + ARROW_HEIGHT;
+            int paddingVertical = 30 + ARROW_HEIGHT;
+            setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical);
         }
 
         public void setCustomView(View customView) {
