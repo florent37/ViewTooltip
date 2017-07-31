@@ -71,6 +71,10 @@ it will automatically adjust his size
 
 # History
 
+## 1.0.8 
+- Clip tooltip to screen (top / bottom) 
+- Text format HTML
+
 ## 1.0.6 
 - Fix align 
 
