@@ -37,6 +37,8 @@ ViewTooltip
         .position(TOP / LEFT / RIGHT / BOTTOM)
         
         .text("The text")
+        .textColor(Color.WHITE)
+        .color(Color.BLACK)
         
         .corner(10)
         
