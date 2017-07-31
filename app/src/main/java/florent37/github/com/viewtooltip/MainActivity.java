@@ -79,6 +79,7 @@ public class MainActivity extends Activity {
                 ViewTooltip
                         .on(editText)
                         .color(Color.BLACK)
+                        .padding(20, 20)
                         .position(ViewTooltip.Position.BOTTOM)
                         .align(ViewTooltip.ALIGN.START)
                         .text("abcdefg")

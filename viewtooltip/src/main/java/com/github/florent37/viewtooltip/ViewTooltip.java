@@ -120,6 +120,12 @@ public class ViewTooltip {
         return this;
     }
 
+    public ViewTooltip padding(int vertical, int horizontal) {
+        this.tooltip_view.paddingVertical = vertical;
+        this.tooltip_view.paddingHorizontal = horizontal;
+        return this;
+    }
+
     public ViewTooltip animation(TooltipAnimation tooltipAnimation) {
         this.tooltip_view.setTooltipAnimation(tooltipAnimation);
         return this;
@@ -233,6 +239,9 @@ public class ViewTooltip {
 
         private int corner = 30;
 
+        public int paddingVertical = 30;
+        public int paddingHorizontal = 30;
+
         public ViewTooltip_view(Context context) {
             super(context);
             setWillNotDraw(false);
@@ -245,9 +254,9 @@ public class ViewTooltip {
             bubblePaint.setColor(color);
             bubblePaint.setStyle(Paint.Style.FILL);
 
-            int paddingHorizontal = 30 + ARROW_HEIGHT;
-            int paddingVertical = 30 + ARROW_HEIGHT;
-            setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical);
+            int paddingHorizontal = this.paddingVertical + ARROW_HEIGHT;
+            int paddingVertical = this.paddingHorizontal + ARROW_HEIGHT;
+            setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical - 10);
         }
 
         public void setCustomView(View customView) {
