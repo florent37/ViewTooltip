@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.github.florent37.viewtooltip.ViewTooltip;
@@ -76,7 +75,7 @@ public class MainActivity extends Activity {
         findViewById(R.id.bottom).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewTooltip
+                final ViewTooltip.TooltipView viewTooltip = ViewTooltip
                         .on(editText)
                         .color(Color.BLACK)
                         .padding(20, 20)
@@ -84,6 +83,8 @@ public class MainActivity extends Activity {
                         .align(ViewTooltip.ALIGN.START)
                         .text("abcdefg")
                         .show();
+
+                viewTooltip.close();
             }
         });
     }

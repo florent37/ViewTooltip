@@ -25,11 +25,11 @@ import android.widget.TextView;
 public class ViewTooltip {
 
     private final View view;
-    private final ViewTooltip_view tooltip_view;
+    private final TooltipView tooltip_view;
 
     private ViewTooltip(View view) {
         this.view = view;
-        this.tooltip_view = new ViewTooltip_view(getActivityContext(view.getContext()));
+        this.tooltip_view = new TooltipView(getActivityContext(view.getContext()));
     }
 
     public static ViewTooltip on(final View view) {
@@ -66,7 +66,7 @@ public class ViewTooltip {
         return this;
     }
 
-    public ViewTooltip_view show() {
+    public TooltipView show() {
         final Context activityContext = tooltip_view.getContext();
         if (activityContext != null && activityContext instanceof Activity) {
             final ViewGroup decorView = (ViewGroup) ((Activity) activityContext).getWindow().getDecorView();
@@ -98,6 +98,10 @@ public class ViewTooltip {
             }, 100);
         }
         return tooltip_view;
+    }
+
+    public void close(){
+        tooltip_view.close();
     }
 
     public ViewTooltip duration(long duration) {
@@ -216,7 +220,7 @@ public class ViewTooltip {
         }
     }
 
-    public static class ViewTooltip_view extends FrameLayout {
+    public static class TooltipView extends FrameLayout {
 
         private static final int MARGIN_SCREEN_BORDER_TOOLTIP = 30;
         private final int ARROW_HEIGHT = 15;
@@ -242,7 +246,7 @@ public class ViewTooltip {
         public int paddingVertical = 30;
         public int paddingHorizontal = 30;
 
-        public ViewTooltip_view(Context context) {
+        public TooltipView(Context context) {
             super(context);
             setWillNotDraw(false);
 
@@ -404,7 +408,7 @@ public class ViewTooltip {
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
                     if (listenerDisplay != null) {
-                        listenerDisplay.onDisplay(ViewTooltip_view.this);
+                        listenerDisplay.onDisplay(TooltipView.this);
                     }
                 }
             });
@@ -417,7 +421,7 @@ public class ViewTooltip {
                     super.onAnimationEnd(animation);
                     animatorListener.onAnimationEnd(animation);
                     if (listenerHide != null) {
-                        listenerHide.onHide(ViewTooltip_view.this);
+                        listenerHide.onHide(TooltipView.this);
                     }
                 }
             });
@@ -452,7 +456,7 @@ public class ViewTooltip {
                     super.onAnimationEnd(animation);
                     if (getParent() != null) {
                         final ViewGroup parent = ((ViewGroup) getParent());
-                        parent.removeView(ViewTooltip_view.this);
+                        parent.removeView(TooltipView.this);
                     }
                 }
             });
@@ -623,6 +627,10 @@ public class ViewTooltip {
                     }
                 });
             }
+        }
+
+        public void close() {
+            remove();
         }
     }
 }
