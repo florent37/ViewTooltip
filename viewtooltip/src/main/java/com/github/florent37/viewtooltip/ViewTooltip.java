@@ -166,6 +166,11 @@ public class ViewTooltip {
         return this;
     }
 
+    public ViewTooltip setTextGravity (int textGravity) {
+        this.tooltip_view.setTextGravity(textGravity);
+        return this;
+    }
+
     public ViewTooltip clickToHide(boolean clickToHide) {
         this.tooltip_view.setClickToHide(clickToHide);
         return this;
@@ -330,6 +335,13 @@ public class ViewTooltip {
         public void setTextSize(int unit, float size) {
             if (childView instanceof TextView) {
                 ((TextView) this.childView).setTextSize(unit, size);
+            }
+            postInvalidate();
+        }
+
+        public void setTextGravity(int textGravity) {
+            if (childView instanceof TextView) {
+                ((TextView) this.childView).setGravity(textGravity);
             }
             postInvalidate();
         }
