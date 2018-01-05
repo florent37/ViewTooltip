@@ -7,17 +7,14 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -192,6 +189,7 @@ public class ViewTooltip {
     public enum ALIGN {
         START,
         CENTER,
+        END
     }
 
     public interface TooltipAnimation {
@@ -505,55 +503,35 @@ public class ViewTooltip {
 
         public void setupPosition(Rect rect) {
 
+            int x, y;
+
             if (position == Position.LEFT || position == Position.RIGHT) {
-
-                final int myHeight = getHeight();
-                final int hisHeight = rect.height();
-
-                final int maxHeight = Math.max(hisHeight, myHeight);
-                final int minHeight = Math.min(hisHeight, myHeight);
-
-                int spacingY = 0;
-                switch (align) {
-                    case START:
-                        spacingY = 0;
-                        break;
-                    //case END:
-                    //    spacingY = maxHeight - minHeight;
-                    //    break;
-                    case CENTER:
-                        spacingY = (int) (-1f * maxHeight / 2f + minHeight / 2f);
-                        break;
-                }
-
                 if (position == Position.LEFT) {
-                    setTranslationY(rect.top + spacingY);
-                    setTranslationX(rect.left - getWidth());
+                    x = rect.left - getWidth();
                 } else {
-                    setTranslationY(rect.top + spacingY);
-                    setTranslationX(rect.right);
+                    x = rect.right;
                 }
-
+                y = rect.top + getAlignOffset(getHeight(), rect.height());
             } else {
-                int spacingX = 0;
-
-                final int myWidth = getWidth();
-                final int hisWidth = rect.width();
-
-                if (align == ALIGN.CENTER) {
-                    spacingX = (int) (hisWidth / 2f - 1f * myWidth / 2f);
-                }
-
                 if (position == Position.BOTTOM) {
-                    setTranslationY(rect.bottom);
-                    setTranslationX(rect.left + spacingX);
+                    y = rect.bottom;
                 } else {
-                    setTranslationY(rect.top - getHeight());
-                    setTranslationX(rect.left + spacingX);
+                    y = rect.top - getHeight();
                 }
+                x = rect.left + getAlignOffset(getWidth(), rect.width());
             }
+
+            setTranslationX(x);
+            setTranslationY(y);
         }
 
+        private int getAlignOffset(int myLength, int hisLength) {
+            switch (align) {
+                case END:    return hisLength - myLength;
+                case CENTER: return (hisLength - myLength) / 2;
+            }
+            return 0;
+        }
 
         private Path drawBubble(RectF myRect, float topLeftDiameter, float topRightDiameter, float bottomRightDiameter, float bottomLeftDiameter) {
             final Path path = new Path();
