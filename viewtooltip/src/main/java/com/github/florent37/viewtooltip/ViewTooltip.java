@@ -3,6 +3,8 @@ package com.github.florent37.viewtooltip;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Canvas;
@@ -12,10 +14,12 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.support.v4.widget.NestedScrollView;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -28,16 +32,47 @@ public class ViewTooltip {
     private final View view;
     private final TooltipView tooltip_view;
 
-    private ViewTooltip(View view) {
+    private ViewTooltip(MyContext myContext, View view) {
         this.view = view;
-        this.tooltip_view = new TooltipView(getActivityContext(view.getContext()));
+        this.tooltip_view = new TooltipView(myContext.getContext());
+        final NestedScrollView scrollParent = findScrollParent(view);
+        if (scrollParent != null) {
+            scrollParent.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    tooltip_view.setTranslationY(tooltip_view.getTranslationY() - (scrollY - oldScrollY));
+                }
+            });
+        }
+    }
+
+    private ViewTooltip(View view) {
+        this(new MyContext(getActivityContext(view.getContext())), view);
     }
 
     public static ViewTooltip on(final View view) {
-        return new ViewTooltip(view);
+        return new ViewTooltip(new MyContext((Activity) view.getContext()), view);
     }
 
-    public Activity getActivityContext(Context context) {
+    public static ViewTooltip on(Fragment fragment, final View view) {
+        return new ViewTooltip(new MyContext(fragment), view);
+    }
+
+    public static ViewTooltip on(Activity activity, final View view) {
+        return new ViewTooltip(new MyContext(activity), view);
+    }
+
+    private NestedScrollView findScrollParent(View view) {
+        if (view.getParent() == null || !(view.getParent() instanceof View)) {
+            return null;
+        } else if (view.getParent() instanceof NestedScrollView) {
+            return ((NestedScrollView) view.getParent());
+        } else {
+            return findScrollParent(((View) view.getParent()));
+        }
+    }
+
+    private static Activity getActivityContext(Context context) {
         while (context instanceof ContextWrapper) {
             if (context instanceof Activity) {
                 return (Activity) context;
@@ -257,6 +292,9 @@ public class ViewTooltip {
         private int paddingRight = 30;
         private int paddingLeft = 30;
 
+        int shadowPadding = 4;
+        int shadowWidth = 8;
+
         private Rect viewRect;
 
         public TooltipView(Context context) {
@@ -271,6 +309,12 @@ public class ViewTooltip {
             bubblePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             bubblePaint.setColor(color);
             bubblePaint.setStyle(Paint.Style.FILL);
+
+
+            setLayerType(LAYER_TYPE_SOFTWARE, bubblePaint);
+
+            bubblePaint.setShadowLayer(shadowWidth, 0, 0, Color.parseColor("#aaaaaa"));
+
         }
 
         public void setCustomView(View customView) {
@@ -356,8 +400,7 @@ public class ViewTooltip {
         protected void onSizeChanged(int width, int height, int oldw, int oldh) {
             super.onSizeChanged(width, height, oldw, oldh);
 
-            bubblePath = drawBubble(new RectF(0, 0, width, height), corner, corner, corner, corner);
-
+            bubblePath = drawBubble(new RectF(shadowPadding, shadowPadding, width - shadowPadding * 2, height - shadowPadding * 2), corner, corner, corner, corner);
             /*
             float x = 0;
             float y = 0;
@@ -485,10 +528,7 @@ public class ViewTooltip {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
-                    if (getParent() != null) {
-                        final ViewGroup parent = ((ViewGroup) getParent());
-                        parent.removeView(TooltipView.this);
-                    }
+                    removeNow();
                 }
             });
         }
@@ -634,8 +674,7 @@ public class ViewTooltip {
         private void onSetup(Rect myRect) {
             setupPosition(myRect);
 
-            bubblePath = drawBubble(new RectF(0, 0, getWidth(), getHeight()), corner, corner, corner, corner);
-
+            bubblePath = drawBubble(new RectF(shadowPadding, shadowPadding, getWidth() - shadowPadding * 2f, getHeight() - shadowPadding * 2f), corner, corner, corner, corner);
             startEnterAnimation();
 
             handleAutoRemove();
@@ -662,6 +701,63 @@ public class ViewTooltip {
 
         public void close() {
             remove();
+        }
+
+        public void removeNow() {
+            if (getParent() != null) {
+                final ViewGroup parent = ((ViewGroup) getParent());
+                parent.removeView(TooltipView.this);
+            }
+        }
+
+        public void closeNow() {
+            removeNow();
+        }
+    }
+
+    public static class MyContext {
+        private Fragment fragment;
+        private Context context;
+        private Activity activity;
+
+        public MyContext(Activity activity) {
+            this.activity = activity;
+        }
+
+        public MyContext(Fragment fragment) {
+            this.fragment = fragment;
+        }
+
+        public MyContext(Context context) {
+            this.context = context;
+        }
+
+        public Context getContext() {
+            if (activity != null) {
+                return activity;
+            } else {
+                return ((Context) fragment.getActivity());
+            }
+        }
+
+        public Activity getActivity() {
+            if (activity != null) {
+                return activity;
+            } else {
+                return fragment.getActivity();
+            }
+        }
+
+
+        public Window getWindow() {
+            if (activity != null) {
+                return activity.getWindow();
+            } else {
+                if (fragment instanceof DialogFragment) {
+                    return ((DialogFragment) fragment).getDialog().getWindow();
+                }
+                return fragment.getActivity().getWindow();
+            }
         }
     }
 }

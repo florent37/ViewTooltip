@@ -78,6 +78,9 @@ it will automatically adjust his size
 
 # History
 
+## 1.1.1
+- Added shadow
+
 ## 1.0.8 
 - Clip tooltip to screen (top / bottom) 
 - Text format HTML
