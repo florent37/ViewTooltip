@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ViewTooltip</string>
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut vestibulum enim. Donec ultrices nisl a sollicitudin gravida. Cras ipsum dolor, vulputate eget ex eget, suscipit sollicitudin mi. Aenean cursus augue quis aliquam pellentesque. Nunc at malesuada enim. Nam mauris sapien, condimentum a tortor eget, mollis dapibus dui. Ut elementum, turpis non tristique molestie, nunc metus rhoncus ante, vitae vulputate quam felis ut mauris. Cras vel varius metus. Fusce ut erat in tortor scelerisque cursus. Morbi laoreet risus urna, quis vestibulum ante tempus vitae. Sed consectetur est eu metus pretium, eget rutrum odio ornare. Etiam malesuada eu tellus vel egestas. Integer vitae turpis imperdiet, faucibus felis sit amet, ornare sem.</string>
 </resources>

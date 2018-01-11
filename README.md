@@ -78,6 +78,9 @@ it will automatically adjust his size
 
 # History
 
+## 1.1.2
+- Fix align bottom, text out of screen
+
 ## 1.1.1
 - Added shadow
 

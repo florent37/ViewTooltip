@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
@@ -84,6 +85,11 @@ public class ViewTooltip {
 
     public ViewTooltip position(Position position) {
         this.tooltip_view.setPosition(position);
+        return this;
+    }
+
+    public ViewTooltip withShadow(boolean withShadow) {
+        this.tooltip_view.setWithShadow(withShadow);
         return this;
     }
 
@@ -313,7 +319,7 @@ public class ViewTooltip {
 
             setLayerType(LAYER_TYPE_SOFTWARE, bubblePaint);
 
-            bubblePaint.setShadowLayer(shadowWidth, 0, 0, Color.parseColor("#aaaaaa"));
+            setWithShadow(true);
 
         }
 
@@ -555,7 +561,7 @@ public class ViewTooltip {
             } else {
                 if (position == Position.BOTTOM) {
                     y = rect.bottom;
-                } else {
+                } else { // top
                     y = rect.top - getHeight();
                 }
                 x = rect.left + getAlignOffset(getWidth(), rect.width());
@@ -643,6 +649,10 @@ public class ViewTooltip {
         }
 
         public boolean adjustSize(Rect rect, int screenWidth) {
+
+            final Rect r = new Rect();
+            getGlobalVisibleRect(r);
+
             boolean changed = false;
             final ViewGroup.LayoutParams layoutParams = getLayoutParams();
             if (position == Position.LEFT && getWidth() > rect.left) {
@@ -652,19 +662,18 @@ public class ViewTooltip {
                 layoutParams.width = screenWidth - rect.right - MARGIN_SCREEN_BORDER_TOOLTIP;
                 changed = true;
             } else if (position == Position.TOP || position == Position.BOTTOM) {
-                float widthRight = (getWidth() - rect.width()) / 2f;
-                if(rect.right + widthRight > screenWidth) {
-                    final float movinX = (rect.right + widthRight) - screenWidth + 30;
-                    rect.left -= movinX;
-                    rect.right -= movinX;
+
+                if((rect.centerX() + getWidth() / 2f) > screenWidth){
+                    float diff = (rect.centerX() + getWidth() / 2f) - screenWidth;
+
+                    rect.left -=  diff;
+                    rect.right -=  diff;
+
+                    setAlign(ALIGN.CENTER);
+
                     changed = true;
                 }
-                else if(rect.left - widthRight < 0) {
-                    final float movinX = 0 - (rect.left - widthRight) + 30;
-                    rect.left += movinX;
-                    rect.right += movinX;
-                    changed = true;
-                }
+
             }
             setLayoutParams(layoutParams);
             postInvalidate();
@@ -712,6 +721,14 @@ public class ViewTooltip {
 
         public void closeNow() {
             removeNow();
+        }
+
+        public void setWithShadow(boolean withShadow) {
+            if(withShadow){
+                bubblePaint.setShadowLayer(shadowWidth, 0, 0, Color.parseColor("#aaaaaa"));
+            } else {
+                bubblePaint.setShadowLayer(0, 0, 0, Color.TRANSPARENT);
+            }
         }
     }
 

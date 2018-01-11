@@ -25,10 +25,9 @@ public class MainActivity extends AppCompatActivity {
                 //customView.setText("test");
                 ViewTooltip
                         .on(editText)
-                        .color(Color.BLACK)
                        // .customView(customView)
                         .position(ViewTooltip.Position.LEFT)
-                        .text("Some tooltip with long text")
+                        .text(getResources().getString(R.string.lorem))
                         .clickToHide(true)
                         .autoHide(false, 0)
                         .animation(new ViewTooltip.FadeTooltipAnimation(500))
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                         .on(editText)
                         .autoHide(true, 1000)
                         .position(ViewTooltip.Position.RIGHT)
-                        .text("Some tooltip with long text")
+                        .text(getResources().getString(R.string.lorem))
                         .show();
             }
         });
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 ViewTooltip
                         .on(editText)
                         .position(ViewTooltip.Position.TOP)
-                        .text("Some tooltip with long text")
+                        .text(getResources().getString(R.string.lorem))
                         .show();
             }
         });
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                         .padding(20, 20, 20, 20)
                         .position(ViewTooltip.Position.BOTTOM)
                         .align(ViewTooltip.ALIGN.START)
-                        .text("abcdefg")
+                        .text(getResources().getString(R.string.lorem))
                         .show();
 
                 //viewTooltip.close();
