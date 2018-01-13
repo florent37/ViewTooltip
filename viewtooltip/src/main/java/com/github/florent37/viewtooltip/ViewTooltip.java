@@ -662,19 +662,39 @@ public class ViewTooltip {
                 layoutParams.width = screenWidth - rect.right - MARGIN_SCREEN_BORDER_TOOLTIP;
                 changed = true;
             } else if (position == Position.TOP || position == Position.BOTTOM) {
+                int adjustedLeft = rect.left;
+                int adjustedRight = rect.right;
 
                 if((rect.centerX() + getWidth() / 2f) > screenWidth){
                     float diff = (rect.centerX() + getWidth() / 2f) - screenWidth;
 
-                    rect.left -=  diff;
-                    rect.right -=  diff;
+                    adjustedLeft -=  diff;
+                    adjustedRight -=  diff;
 
                     setAlign(ALIGN.CENTER);
+                    changed = true;
+                }else if((rect.centerX() - getWidth() / 2f) < 0){
+                    float diff = -(rect.centerX() - getWidth() / 2f);
 
+                    adjustedLeft +=  diff;
+                    adjustedRight +=  diff;
+
+                    setAlign(ALIGN.CENTER);
                     changed = true;
                 }
 
+                if(adjustedLeft < 0){
+                    adjustedLeft = 0;
+                }
+
+                if(adjustedRight > screenWidth){
+                    adjustedRight = screenWidth;
+                }
+
+                rect.left = adjustedLeft;
+                rect.right = adjustedRight;
             }
+
             setLayoutParams(layoutParams);
             postInvalidate();
             return changed;
