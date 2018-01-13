@@ -78,7 +78,7 @@ it will automatically adjust his size
 
 # History
 
-## 1.1.2
+## 1.1.3
 - Fix align bottom, text out of screen
 
 ## 1.1.1
