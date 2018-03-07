@@ -102,6 +102,16 @@ public class ViewTooltip {
         return this;
     }
 
+    public ViewTooltip arrowWidth(int arrowWidth) {
+        this.tooltip_view.setArrowWidth(arrowWidth);
+        return this;
+    }
+
+    public ViewTooltip arrowHeight(int arrowHeight) {
+        this.tooltip_view.setArrowHeight(arrowHeight);
+        return this;
+    }
+
     public ViewTooltip align(ALIGN align) {
         this.tooltip_view.setAlign(align);
         return this;
@@ -272,8 +282,8 @@ public class ViewTooltip {
     public static class TooltipView extends FrameLayout {
 
         private static final int MARGIN_SCREEN_BORDER_TOOLTIP = 30;
-        private final int ARROW_HEIGHT = 15;
-        private final int ARROW_WIDTH = 15;
+        private int arrowHeight = 15;
+        private int arrowWidth = 15;
         protected View childView;
         private int color = Color.parseColor("#1F7C82");
         private Path bubblePath;
@@ -338,16 +348,16 @@ public class ViewTooltip {
             this.position = position;
             switch (position){
                 case TOP:
-                    setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom + ARROW_HEIGHT);
+                    setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom + arrowHeight);
                     break;
                 case BOTTOM:
-                    setPadding(paddingLeft, paddingTop + ARROW_HEIGHT, paddingRight, paddingBottom);
+                    setPadding(paddingLeft, paddingTop + arrowHeight, paddingRight, paddingBottom);
                     break;
                 case LEFT:
-                    setPadding(paddingLeft, paddingTop, paddingRight + ARROW_HEIGHT, paddingBottom);
+                    setPadding(paddingLeft, paddingTop, paddingRight + arrowHeight, paddingBottom);
                     break;
                 case RIGHT:
-                    setPadding(paddingLeft + ARROW_HEIGHT, paddingTop, paddingRight, paddingBottom);
+                    setPadding(paddingLeft + arrowHeight, paddingTop, paddingRight, paddingBottom);
                     break;
             }
             postInvalidate();
@@ -369,6 +379,24 @@ public class ViewTooltip {
             if (childView instanceof TextView) {
                 ((TextView) this.childView).setTextColor(textColor);
             }
+            postInvalidate();
+        }
+
+        public int getArrowHeight() {
+            return arrowHeight;
+        }
+
+        public void setArrowHeight(int arrowHeight) {
+            this.arrowHeight = arrowHeight;
+            postInvalidate();
+        }
+
+        public int getArrowWidth() {
+            return arrowWidth;
+        }
+
+        public void setArrowWidth(int arrowWidth) {
+            this.arrowWidth = arrowWidth;
             postInvalidate();
         }
 
@@ -414,20 +442,20 @@ public class ViewTooltip {
                 case TOP: {
                     bubblePath.moveTo(x, y);
                     bubblePath.lineTo((x = width), y);
-                    bubblePath.lineTo(x, (y = height - ARROW_HEIGHT));
-                    bubblePath.lineTo((x = width / 2f + ARROW_WIDTH), y);
+                    bubblePath.lineTo(x, (y = height - arrowHeight));
+                    bubblePath.lineTo((x = width / 2f + arrowWidth), y);
                     bubblePath.lineTo((x = width / 2f), (y = height));
-                    bubblePath.lineTo((x = width / 2f - ARROW_WIDTH), (y = height - ARROW_HEIGHT));
+                    bubblePath.lineTo((x = width / 2f - arrowWidth), (y = height - arrowHeight));
                     bubblePath.lineTo((x = 0), y);
                     bubblePath.lineTo((x = 0), y);
                     bubblePath.close();
                 }
                 break;
                 case BOTTOM: {
-                    bubblePath.moveTo(x, (y = ARROW_HEIGHT));
-                    bubblePath.lineTo((x = width / 2f - ARROW_WIDTH), y);
+                    bubblePath.moveTo(x, (y = arrowHeight));
+                    bubblePath.lineTo((x = width / 2f - arrowWidth), y);
                     bubblePath.lineTo((x = width / 2f), (y = 0));
-                    bubblePath.lineTo((x = width / 2f + ARROW_WIDTH), (y = ARROW_HEIGHT));
+                    bubblePath.lineTo((x = width / 2f + arrowWidth), (y = arrowHeight));
                     bubblePath.lineTo((x = width), y);
                     bubblePath.lineTo(x, (y = height));
                     bubblePath.lineTo((x = 0), y);
@@ -436,24 +464,24 @@ public class ViewTooltip {
                 break;
                 case LEFT: {
                     bubblePath.moveTo(x, y);
-                    bubblePath.lineTo((x = width - ARROW_HEIGHT), y);
-                    bubblePath.lineTo(x, (y = height / 2 - ARROW_WIDTH));
-                    bubblePath.lineTo((x = width - ARROW_HEIGHT), (y = height / 2 - ARROW_WIDTH));
+                    bubblePath.lineTo((x = width - arrowHeight), y);
+                    bubblePath.lineTo(x, (y = height / 2 - arrowWidth));
+                    bubblePath.lineTo((x = width - arrowHeight), (y = height / 2 - arrowWidth));
                     bubblePath.lineTo((x = width), (y = height / 2));
-                    bubblePath.lineTo((x = width - ARROW_HEIGHT), (y = height / 2 + ARROW_WIDTH));
+                    bubblePath.lineTo((x = width - arrowHeight), (y = height / 2 + arrowWidth));
                     bubblePath.lineTo(x, (y = height));
                     bubblePath.lineTo((x = 0), y);
                     bubblePath.close();
                 }
                 break;
                 case RIGHT: {
-                    bubblePath.moveTo((x = ARROW_HEIGHT), y);
+                    bubblePath.moveTo((x = arrowHeight), y);
                     bubblePath.lineTo((x = width), y);
                     bubblePath.lineTo(x, (y = height));
-                    bubblePath.lineTo((x = ARROW_HEIGHT), y);
-                    bubblePath.lineTo(x, (y = height / 2 + ARROW_WIDTH));
+                    bubblePath.lineTo((x = arrowHeight), y);
+                    bubblePath.lineTo(x, (y = height / 2 + arrowWidth));
                     bubblePath.lineTo((x = 0), (y = height / 2));
-                    bubblePath.lineTo((x = ARROW_HEIGHT), (y = height / 2 - ARROW_WIDTH));
+                    bubblePath.lineTo((x = arrowHeight), (y = height / 2 - arrowWidth));
                     bubblePath.close();
                 }
                 break;
@@ -589,10 +617,10 @@ public class ViewTooltip {
             bottomLeftDiameter = bottomLeftDiameter < 0 ? 0 : bottomLeftDiameter;
             bottomRightDiameter = bottomRightDiameter < 0 ? 0 : bottomRightDiameter;
 
-            final float spacingLeft = this.position == Position.RIGHT ? ARROW_HEIGHT : 0;
-            final float spacingTop = this.position == Position.BOTTOM ? ARROW_HEIGHT : 0;
-            final float spacingRight = this.position == Position.LEFT ? ARROW_HEIGHT : 0;
-            final float spacingBottom = this.position == Position.TOP ? ARROW_HEIGHT : 0;
+            final float spacingLeft = this.position == Position.RIGHT ? arrowHeight : 0;
+            final float spacingTop = this.position == Position.BOTTOM ? arrowHeight : 0;
+            final float spacingRight = this.position == Position.LEFT ? arrowHeight : 0;
+            final float spacingBottom = this.position == Position.TOP ? arrowHeight : 0;
 
             final float left = spacingLeft + myRect.left;
             final float top = spacingTop + myRect.top;
@@ -604,9 +632,9 @@ public class ViewTooltip {
             //LEFT, TOP
 
             if (position == Position.BOTTOM) {
-                path.lineTo(centerX - ARROW_WIDTH, top);
+                path.lineTo(centerX - arrowWidth, top);
                 path.lineTo(centerX, myRect.top);
-                path.lineTo(centerX + ARROW_WIDTH, top);
+                path.lineTo(centerX + arrowWidth, top);
             }
             path.lineTo(right - topRightDiameter / 2f, top);
 
@@ -614,9 +642,9 @@ public class ViewTooltip {
             //RIGHT, TOP
 
             if (position == Position.LEFT) {
-                path.lineTo(right, bottom / 2f - ARROW_WIDTH);
+                path.lineTo(right, bottom / 2f - arrowWidth);
                 path.lineTo(myRect.right, bottom / 2f);
-                path.lineTo(right, bottom / 2f + ARROW_WIDTH);
+                path.lineTo(right, bottom / 2f + arrowWidth);
             }
             path.lineTo(right, bottom - bottomRightDiameter / 2);
 
@@ -624,9 +652,9 @@ public class ViewTooltip {
             //RIGHT, BOTTOM
 
             if (position == Position.TOP) {
-                path.lineTo(centerX + ARROW_WIDTH, bottom);
+                path.lineTo(centerX + arrowWidth, bottom);
                 path.lineTo(centerX, myRect.bottom);
-                path.lineTo(centerX - ARROW_WIDTH, bottom);
+                path.lineTo(centerX - arrowWidth, bottom);
             }
             path.lineTo(left + bottomLeftDiameter / 2, bottom);
 
@@ -634,9 +662,9 @@ public class ViewTooltip {
             //LEFT, BOTTOM
 
             if (position == Position.RIGHT) {
-                path.lineTo(left, bottom / 2f + ARROW_WIDTH);
+                path.lineTo(left, bottom / 2f + arrowWidth);
                 path.lineTo(myRect.left, bottom / 2f);
-                path.lineTo(left, bottom / 2f - ARROW_WIDTH);
+                path.lineTo(left, bottom / 2f - arrowWidth);
             }
             path.lineTo(left, top + topLeftDiameter / 2);
 
