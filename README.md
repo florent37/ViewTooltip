@@ -24,7 +24,7 @@ ViewTooltip
 [ ![Download](https://api.bintray.com/packages/florent37/maven/viewtooltip/images/download.svg) ](https://bintray.com/florent37/maven/viewtooltip/_latestVersion)
 ```java
 dependencies {
-    compile 'com.github.florent37:viewtooltip:1.1.1'
+    compile 'com.github.florent37:viewtooltip:(last version)'
 }
 ```
 
@@ -49,6 +49,11 @@ ViewTooltip
         .color(Color.BLACK)
         
         .corner(10)
+
+        .arrowWidth(15)
+        .arrowHeight(15)
+
+        .distanceWithView(0)
         
         //change the opening animation
         .animation(new ViewTooltip.TooltipAnimation(){...})
@@ -77,6 +82,13 @@ it will automatically adjust his size
 [![screen](https://raw.githubusercontent.com/florent37/ViewTooltip/master/medias/clip_screen_large.gif)](https://www.github.com/florent37/ViewTooltip)
 
 # History
+
+# 1.1.5
+- Use Fragment V4
+- Added aistanceWithView
+
+# 1.1.4
+- Added arrowWidth / arrowHeight
 
 ## 1.1.3
 - Fix align bottom, text out of screen

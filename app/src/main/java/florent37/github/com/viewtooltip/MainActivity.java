@@ -76,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
                 final ViewTooltip.TooltipView viewTooltip = ViewTooltip
                         .on(editText)
                         .color(Color.BLACK)
+                        .distanceWithView(0)
+                        .arrowHeight(0)
+                        .arrowWidth(0)
                         .padding(20, 20, 20, 20)
                         .position(ViewTooltip.Position.BOTTOM)
                         .align(ViewTooltip.ALIGN.START)

@@ -3,8 +3,6 @@ package com.github.florent37.viewtooltip;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Canvas;
@@ -14,6 +12,8 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.text.Html;
 import android.view.View;
@@ -229,6 +229,11 @@ public class ViewTooltip {
         return this;
     }
 
+    public ViewTooltip distanceWithView(int distance) {
+        this.tooltip_view.setDistanceWithView(distance);
+        return this;
+    }
+
     public enum Position {
         LEFT,
         RIGHT,
@@ -311,6 +316,7 @@ public class ViewTooltip {
         int shadowWidth = 8;
 
         private Rect viewRect;
+        private int distanceWithView = 0;
 
         public TooltipView(Context context) {
             super(context);
@@ -434,58 +440,6 @@ public class ViewTooltip {
             super.onSizeChanged(width, height, oldw, oldh);
 
             bubblePath = drawBubble(new RectF(shadowPadding, shadowPadding, width - shadowPadding * 2, height - shadowPadding * 2), corner, corner, corner, corner);
-            /*
-            float x = 0;
-            float y = 0;
-
-            switch (position) {
-                case TOP: {
-                    bubblePath.moveTo(x, y);
-                    bubblePath.lineTo((x = width), y);
-                    bubblePath.lineTo(x, (y = height - arrowHeight));
-                    bubblePath.lineTo((x = width / 2f + arrowWidth), y);
-                    bubblePath.lineTo((x = width / 2f), (y = height));
-                    bubblePath.lineTo((x = width / 2f - arrowWidth), (y = height - arrowHeight));
-                    bubblePath.lineTo((x = 0), y);
-                    bubblePath.lineTo((x = 0), y);
-                    bubblePath.close();
-                }
-                break;
-                case BOTTOM: {
-                    bubblePath.moveTo(x, (y = arrowHeight));
-                    bubblePath.lineTo((x = width / 2f - arrowWidth), y);
-                    bubblePath.lineTo((x = width / 2f), (y = 0));
-                    bubblePath.lineTo((x = width / 2f + arrowWidth), (y = arrowHeight));
-                    bubblePath.lineTo((x = width), y);
-                    bubblePath.lineTo(x, (y = height));
-                    bubblePath.lineTo((x = 0), y);
-                    bubblePath.close();
-                }
-                break;
-                case LEFT: {
-                    bubblePath.moveTo(x, y);
-                    bubblePath.lineTo((x = width - arrowHeight), y);
-                    bubblePath.lineTo(x, (y = height / 2 - arrowWidth));
-                    bubblePath.lineTo((x = width - arrowHeight), (y = height / 2 - arrowWidth));
-                    bubblePath.lineTo((x = width), (y = height / 2));
-                    bubblePath.lineTo((x = width - arrowHeight), (y = height / 2 + arrowWidth));
-                    bubblePath.lineTo(x, (y = height));
-                    bubblePath.lineTo((x = 0), y);
-                    bubblePath.close();
-                }
-                break;
-                case RIGHT: {
-                    bubblePath.moveTo((x = arrowHeight), y);
-                    bubblePath.lineTo((x = width), y);
-                    bubblePath.lineTo(x, (y = height));
-                    bubblePath.lineTo((x = arrowHeight), y);
-                    bubblePath.lineTo(x, (y = height / 2 + arrowWidth));
-                    bubblePath.lineTo((x = 0), (y = height / 2));
-                    bubblePath.lineTo((x = arrowHeight), (y = height / 2 - arrowWidth));
-                    bubblePath.close();
-                }
-                break;
-            }*/
         }
 
         @Override
@@ -580,16 +534,16 @@ public class ViewTooltip {
 
             if (position == Position.LEFT || position == Position.RIGHT) {
                 if (position == Position.LEFT) {
-                    x = rect.left - getWidth();
+                    x = rect.left - getWidth() - distanceWithView;
                 } else {
-                    x = rect.right;
+                    x = rect.right + distanceWithView;
                 }
                 y = rect.top + getAlignOffset(getHeight(), rect.height());
             } else {
                 if (position == Position.BOTTOM) {
-                    y = rect.bottom;
+                    y = rect.bottom + distanceWithView;
                 } else { // top
-                    y = rect.top - getHeight();
+                    y = rect.top - getHeight() - distanceWithView;
                 }
                 x = rect.left + getAlignOffset(getWidth(), rect.width());
             }
@@ -683,10 +637,10 @@ public class ViewTooltip {
             boolean changed = false;
             final ViewGroup.LayoutParams layoutParams = getLayoutParams();
             if (position == Position.LEFT && getWidth() > rect.left) {
-                layoutParams.width = rect.left - MARGIN_SCREEN_BORDER_TOOLTIP;
+                layoutParams.width = rect.left - MARGIN_SCREEN_BORDER_TOOLTIP - distanceWithView;
                 changed = true;
             } else if (position == Position.RIGHT && rect.right + getWidth() > screenWidth) {
-                layoutParams.width = screenWidth - rect.right - MARGIN_SCREEN_BORDER_TOOLTIP;
+                layoutParams.width = screenWidth - rect.right - MARGIN_SCREEN_BORDER_TOOLTIP - distanceWithView;
                 changed = true;
             } else if (position == Position.TOP || position == Position.BOTTOM) {
                 int adjustedLeft = rect.left;
@@ -776,6 +730,10 @@ public class ViewTooltip {
             } else {
                 bubblePaint.setShadowLayer(0, 0, 0, Color.TRANSPARENT);
             }
+        }
+
+        public void setDistanceWithView(int distanceWithView) {
+            this.distanceWithView = distanceWithView;
         }
     }
 
