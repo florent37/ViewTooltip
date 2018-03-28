@@ -51,7 +51,7 @@ public class ViewTooltip {
     }
 
     public static ViewTooltip on(final View view) {
-        return new ViewTooltip(new MyContext((Activity) view.getContext()), view);
+        return new ViewTooltip(new MyContext(getActivityContext(view.getContext())), view);
     }
 
     public static ViewTooltip on(Fragment fragment, final View view) {
@@ -59,7 +59,7 @@ public class ViewTooltip {
     }
 
     public static ViewTooltip on(Activity activity, final View view) {
-        return new ViewTooltip(new MyContext(activity), view);
+        return new ViewTooltip(new MyContext(getActivityContext(activity)), view);
     }
 
     private NestedScrollView findScrollParent(View view) {

@@ -34,7 +34,7 @@ dependencies {
 
 ```java
 ViewTooltip
-        .on(editText)
+        .on(this, editText)
         
         .autoHide(true / false, 1000)
         .clickToHide(true / false)
