@@ -4,7 +4,7 @@
 
 ```java
 ViewTooltip
-        .on(editText)
+        .on(this, editText)
         .autoHide(true, 1000)
         .corner(30)
         .position(ViewTooltip.Position.RIGHT)
