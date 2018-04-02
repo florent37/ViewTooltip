@@ -12,7 +12,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:'+project.supportVersion
+    compileOnly 'com.android.support:appcompat-v7:'+project.supportVersion
 }
 
 ext {
