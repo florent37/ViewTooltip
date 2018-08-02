@@ -29,10 +29,26 @@ import android.widget.TextView;
 
 public class ViewTooltip {
 
+    private View rootView;
     private final View view;
     private final TooltipView tooltip_view;
 
     private ViewTooltip(MyContext myContext, View view) {
+        this.view = view;
+        this.tooltip_view = new TooltipView(myContext.getContext());
+        final NestedScrollView scrollParent = findScrollParent(view);
+        if (scrollParent != null) {
+            scrollParent.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    tooltip_view.setTranslationY(tooltip_view.getTranslationY() - (scrollY - oldScrollY));
+                }
+            });
+        }
+    }
+
+    private ViewTooltip(MyContext myContext, View rootView, View view) {
+        this.rootView = rootView;
         this.view = view;
         this.tooltip_view = new TooltipView(myContext.getContext());
         final NestedScrollView scrollParent = findScrollParent(view);
@@ -60,6 +76,10 @@ public class ViewTooltip {
 
     public static ViewTooltip on(Activity activity, final View view) {
         return new ViewTooltip(new MyContext(getActivityContext(activity)), view);
+    }
+
+    public static ViewTooltip on(Activity activity, final View rootView, final View view) {
+        return new ViewTooltip(new MyContext(getActivityContext(activity)), rootView, view);
     }
 
     private NestedScrollView findScrollParent(View view) {
@@ -120,7 +140,10 @@ public class ViewTooltip {
     public TooltipView show() {
         final Context activityContext = tooltip_view.getContext();
         if (activityContext != null && activityContext instanceof Activity) {
-            final ViewGroup decorView = (ViewGroup) ((Activity) activityContext).getWindow().getDecorView();
+            final ViewGroup decorView = rootView != null ?
+                    (ViewGroup) rootView :
+                    (ViewGroup) ((Activity) activityContext).getWindow().getDecorView();
+
             view.postDelayed(new Runnable() {
                 @Override
                 public void run() {
