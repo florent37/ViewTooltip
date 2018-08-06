@@ -165,6 +165,11 @@ public class ViewTooltip {
         return this;
     }
 
+    public ViewTooltip color(Paint paint) {
+        this.tooltip_view.setPaint(paint);
+        return this;
+    }
+
     public ViewTooltip onDisplay(ListenerDisplay listener) {
         this.tooltip_view.setListenerDisplay(listener);
         return this;
@@ -347,6 +352,12 @@ public class ViewTooltip {
         public void setColor(int color) {
             this.color = color;
             bubblePaint.setColor(color);
+            postInvalidate();
+        }
+
+        public void setPaint(Paint paint) {
+            bubblePaint = paint;
+            setLayerType(LAYER_TYPE_SOFTWARE, paint);
             postInvalidate();
         }
 

@@ -1,7 +1,11 @@
 package florent37.github.com.viewtooltip;
 
 import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Shader;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +14,12 @@ import android.widget.EditText;
 import com.github.florent37.viewtooltip.ViewTooltip;
 
 public class MainActivity extends AppCompatActivity {
+
+    @ColorInt
+    public static final int BLUE = 0xFF0FB8B3;
+
+    @ColorInt
+    public static final int GREEN = 0xFF5BBD76;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
                         .text(getResources().getString(R.string.lorem))
                         .clickToHide(true)
                         .autoHide(false, 0)
+                        .color(createPaint())
                         .animation(new ViewTooltip.FadeTooltipAnimation(500))
                         .onDisplay(new ViewTooltip.ListenerDisplay() {
                             @Override
@@ -112,5 +123,12 @@ public class MainActivity extends AppCompatActivity {
                         .show();
             }
         });
+    }
+
+    private Paint createPaint() {
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setShader(new LinearGradient(0, 0, 0, 600, BLUE, GREEN, Shader.TileMode.CLAMP));
+        paint.setStyle(Paint.Style.FILL);
+        return paint;
     }
 }
