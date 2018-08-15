@@ -23,6 +23,8 @@ import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import java.util.Arrays;
+
 /**
  * Created by florentchampigny on 02/06/2017.
  */
@@ -109,6 +111,16 @@ public class ViewTooltip {
 
     public ViewTooltip arrowHeight(int arrowHeight) {
         this.tooltip_view.setArrowHeight(arrowHeight);
+        return this;
+    }
+
+    public ViewTooltip arrowSourceMargin(int arrowSourceMargin) {
+        this.tooltip_view.setArrowSourceMargin(arrowSourceMargin);
+        return this;
+    }
+
+    public ViewTooltip arrowTargetMargin(int arrowTargetMargin) {
+        this.tooltip_view.setArrowTargetMargin(arrowTargetMargin);
         return this;
     }
 
@@ -294,6 +306,8 @@ public class ViewTooltip {
         private static final int MARGIN_SCREEN_BORDER_TOOLTIP = 30;
         private int arrowHeight = 15;
         private int arrowWidth = 15;
+        private int arrowSourceMargin = 0;
+        private int arrowTargetMargin = 0;
         protected View childView;
         private int color = Color.parseColor("#1F7C82");
         private Path bubblePath;
@@ -414,6 +428,24 @@ public class ViewTooltip {
 
         public void setArrowWidth(int arrowWidth) {
             this.arrowWidth = arrowWidth;
+            postInvalidate();
+        }
+
+        public int getArrowSourceMargin() {
+            return arrowSourceMargin;
+        }
+
+        public void setArrowSourceMargin(int arrowSourceMargin) {
+            this.arrowSourceMargin = arrowSourceMargin;
+            postInvalidate();
+        }
+
+        public int getArrowTargetMargin() {
+            return arrowTargetMargin;
+        }
+
+        public void setArrowTargetMargin(int arrowTargetMargin) {
+            this.arrowTargetMargin = arrowTargetMargin;
             postInvalidate();
         }
 
@@ -593,13 +625,26 @@ public class ViewTooltip {
             final float bottom = myRect.bottom - spacingBottom;
             final float centerX = viewRect.centerX() - getX();
 
+            final float arrowSourceX = (Arrays.asList(Position.TOP, Position.BOTTOM).contains(this.position))
+                    ? centerX + arrowSourceMargin
+                    : centerX;
+            final float arrowTargetX = (Arrays.asList(Position.TOP, Position.BOTTOM).contains(this.position))
+                    ? centerX + arrowTargetMargin
+                    : centerX;
+            final float arrowSourceY = (Arrays.asList(Position.RIGHT, Position.LEFT).contains(this.position))
+                    ? bottom / 2f - arrowSourceMargin
+                    : bottom / 2f;
+            final float arrowTargetY = (Arrays.asList(Position.RIGHT, Position.LEFT).contains(this.position))
+                    ? bottom / 2f - arrowTargetMargin
+                    : bottom / 2f;
+
             path.moveTo(left + topLeftDiameter / 2f, top);
             //LEFT, TOP
 
             if (position == Position.BOTTOM) {
-                path.lineTo(centerX - arrowWidth, top);
-                path.lineTo(centerX, myRect.top);
-                path.lineTo(centerX + arrowWidth, top);
+                path.lineTo(arrowSourceX - arrowWidth, top);
+                path.lineTo(arrowTargetX, myRect.top);
+                path.lineTo(arrowSourceX + arrowWidth, top);
             }
             path.lineTo(right - topRightDiameter / 2f, top);
 
@@ -607,9 +652,9 @@ public class ViewTooltip {
             //RIGHT, TOP
 
             if (position == Position.LEFT) {
-                path.lineTo(right, bottom / 2f - arrowWidth);
-                path.lineTo(myRect.right, bottom / 2f);
-                path.lineTo(right, bottom / 2f + arrowWidth);
+                path.lineTo(right, arrowSourceY - arrowWidth);
+                path.lineTo(myRect.right, arrowTargetY);
+                path.lineTo(right, arrowSourceY + arrowWidth);
             }
             path.lineTo(right, bottom - bottomRightDiameter / 2);
 
@@ -617,9 +662,9 @@ public class ViewTooltip {
             //RIGHT, BOTTOM
 
             if (position == Position.TOP) {
-                path.lineTo(centerX + arrowWidth, bottom);
-                path.lineTo(centerX, myRect.bottom);
-                path.lineTo(centerX - arrowWidth, bottom);
+                path.lineTo(arrowSourceX + arrowWidth, bottom);
+                path.lineTo(arrowTargetX, myRect.bottom);
+                path.lineTo(arrowSourceX - arrowWidth, bottom);
             }
             path.lineTo(left + bottomLeftDiameter / 2, bottom);
 
@@ -627,9 +672,9 @@ public class ViewTooltip {
             //LEFT, BOTTOM
 
             if (position == Position.RIGHT) {
-                path.lineTo(left, bottom / 2f + arrowWidth);
-                path.lineTo(myRect.left, bottom / 2f);
-                path.lineTo(left, bottom / 2f - arrowWidth);
+                path.lineTo(left, arrowSourceY + arrowWidth);
+                path.lineTo(myRect.left, arrowTargetY);
+                path.lineTo(left, arrowSourceY - arrowWidth);
             }
             path.lineTo(left, top + topLeftDiameter / 2);
 
