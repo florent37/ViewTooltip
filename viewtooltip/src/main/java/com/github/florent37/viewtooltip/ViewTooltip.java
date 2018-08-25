@@ -251,6 +251,15 @@ public class ViewTooltip {
         return this;
     }
 
+    public ViewTooltip border(int color,float width){
+        Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        borderPaint.setColor(color);
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(width);
+        this.tooltip_view.setBorderPaint(borderPaint);
+        return this;
+    }
+
     public enum Position {
         LEFT,
         RIGHT,
@@ -312,6 +321,7 @@ public class ViewTooltip {
         private int color = Color.parseColor("#1F7C82");
         private Path bubblePath;
         private Paint bubblePaint;
+        private Paint borderPaint;
         private Position position = Position.BOTTOM;
         private ALIGN align = ALIGN.CENTER;
         private boolean clickToHide;
@@ -350,6 +360,7 @@ public class ViewTooltip {
             bubblePaint.setColor(color);
             bubblePaint.setStyle(Paint.Style.FILL);
 
+            borderPaint = null;
 
             setLayerType(LAYER_TYPE_SOFTWARE, bubblePaint);
 
@@ -491,6 +502,9 @@ public class ViewTooltip {
 
             if (bubblePath != null) {
                 canvas.drawPath(bubblePath, bubblePaint);
+                if(borderPaint != null){
+                    canvas.drawPath(bubblePath,borderPaint);
+                }
             }
         }
 
@@ -790,6 +804,11 @@ public class ViewTooltip {
 
         public void setDistanceWithView(int distanceWithView) {
             this.distanceWithView = distanceWithView;
+        }
+
+        public void setBorderPaint(Paint borderPaint) {
+            this.borderPaint = borderPaint;
+            postInvalidate();
         }
     }
 
