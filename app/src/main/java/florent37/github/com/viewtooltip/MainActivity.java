@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
                         .on(editText)
                        // .customView(customView)
                         .position(ViewTooltip.Position.LEFT)
+                        .arrowSourceMargin(0)
+                        .arrowTargetMargin(0)
                         .text(getResources().getString(R.string.lorem))
                         .clickToHide(true)
                         .autoHide(false, 0)
