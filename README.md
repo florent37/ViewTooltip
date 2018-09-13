@@ -83,6 +83,10 @@ it will automatically adjust his size
 
 # History
 
+# 1.1.7
+- Set text as Int
+- Added shadowColor
+
 # 1.1.5
 - Use Fragment V4
 - Added aistanceWithView

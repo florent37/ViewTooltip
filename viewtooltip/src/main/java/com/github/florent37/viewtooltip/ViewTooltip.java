@@ -12,6 +12,8 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.support.annotation.ColorInt;
+import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
@@ -111,6 +113,11 @@ public class ViewTooltip {
 
     public ViewTooltip withShadow(boolean withShadow) {
         this.tooltip_view.setWithShadow(withShadow);
+        return this;
+    }
+
+    public ViewTooltip shadowColor(@ColorInt int shadowColor) {
+        this.tooltip_view.setShadowColor(shadowColor);
         return this;
     }
 
@@ -229,6 +236,11 @@ public class ViewTooltip {
     }
 
     public ViewTooltip text(String text) {
+        this.tooltip_view.setText(text);
+        return this;
+    }
+
+    public ViewTooltip text(@StringRes int text) {
         this.tooltip_view.setText(text);
         return this;
     }
@@ -369,6 +381,7 @@ public class ViewTooltip {
 
         private Rect viewRect;
         private int distanceWithView = 0;
+        private int shadowColor = Color.parseColor("#aaaaaa");
 
         public TooltipView(Context context) {
             super(context);
@@ -400,6 +413,11 @@ public class ViewTooltip {
         public void setColor(int color) {
             this.color = color;
             bubblePaint.setColor(color);
+            postInvalidate();
+        }
+
+        public void setShadowColor(int color) {
+            this.shadowColor = color;
             postInvalidate();
         }
 
@@ -436,6 +454,13 @@ public class ViewTooltip {
         public void setText(String text) {
             if (childView instanceof TextView) {
                 ((TextView) this.childView).setText(Html.fromHtml(text));
+            }
+            postInvalidate();
+        }
+
+        public void setText(int text) {
+            if (childView instanceof TextView) {
+                ((TextView) this.childView).setText(text);
             }
             postInvalidate();
         }
@@ -819,7 +844,7 @@ public class ViewTooltip {
 
         public void setWithShadow(boolean withShadow) {
             if(withShadow){
-                bubblePaint.setShadowLayer(shadowWidth, 0, 0, Color.parseColor("#aaaaaa"));
+                bubblePaint.setShadowLayer(shadowWidth, 0, 0, shadowColor);
             } else {
                 bubblePaint.setShadowLayer(0, 0, 0, Color.TRANSPARENT);
             }
