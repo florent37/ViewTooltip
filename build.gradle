@@ -25,5 +25,5 @@ ext{
     targetCompatibilityVersion = JavaVersion.VERSION_1_7
     supportVersion = "27.0.2"
 
-    libraryVersion = "1.1.7"
+    libraryVersion = "1.1.8"
 }
