@@ -47,6 +47,7 @@ ViewTooltip
         
         .textColor(Color.WHITE)
         .color(Color.BLACK)
+        .overlayColor(0x80000000)
         
         .corner(10)
 
@@ -69,6 +70,24 @@ ViewTooltip
             @Override
             public void onHide(View view) {
                 
+            }
+        })
+        .onClick(new ViewTooltip.OnClickListener() {
+            @Override
+            public void onClick(int position, ViewTooltip view) {
+                switch (position){
+                    case ViewTooltip.POSITION_OVERLAY:
+                        view.hide();
+                        //Clicked on Overlay
+                        break;
+                    case ViewTooltip.POSITION_TOOLTIP:
+                        view.hide();
+                        //Clicked on Tooltip
+                        break;
+                    case ViewTooltip.POSITION_TARGET:
+                        //Clicked on Target
+                        break;
+                }
             }
         })
         .show();
