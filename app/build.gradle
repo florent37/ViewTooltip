@@ -11,10 +11,11 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
 }
 
 dependencies {
     implementation 'com.android.support:appcompat-v7:'+project.supportVersion
-    implementation 'com.github.florent37:viewtooltip:1.1.8'
-    //implementation project(path: ':viewtooltip')
+//    implementation 'com.github.florent37:viewtooltip:1.1.8'
+    implementation project(':viewtooltip')
 }
