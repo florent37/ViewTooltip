@@ -13,11 +13,13 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.support.annotation.ColorInt;
-import android.support.annotation.StringRes;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.StringRes;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
