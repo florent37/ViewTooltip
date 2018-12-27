@@ -168,7 +168,7 @@ public class ViewTooltip {
                 @Override
                 public void run() {
                     final Rect rect = new Rect();
-                    final Point offset;
+                    final Point offset = new Point();
                     view.getGlobalVisibleRect(rect, offset);
 
                     int[] location = new int[2];
