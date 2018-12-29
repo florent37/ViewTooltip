@@ -102,6 +102,9 @@ it will automatically adjust his size
 
 # History
 
+# 1.2.0
+- Compatible with AndroidX
+
 # 1.1.7
 - Set text as Int
 - Added shadowColor
