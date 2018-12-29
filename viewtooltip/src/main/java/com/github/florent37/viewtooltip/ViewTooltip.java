@@ -5,29 +5,30 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.StringRes;
-import androidx.core.widget.NestedScrollView;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-
+import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
+import android.support.annotation.IntDef;
+import android.support.annotation.StringRes;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.AppCompatImageView;
 import android.text.Html;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
 
 /**
@@ -35,58 +36,75 @@ import java.util.Arrays;
  */
 
 public class ViewTooltip {
-
+    public static final int POSITION_OVERLAY = 1;
+    public static final int POSITION_TOOLTIP = 2;
+    public static final int POSITION_TARGET = 3;
     private View rootView;
     private final View view;
     private final TooltipView tooltip_view;
+    private final FrameLayout overlay;
+    private OnClickListener onClickListener;
 
-    private ViewTooltip(MyContext myContext, View view) {
-        this.view = view;
-        this.tooltip_view = new TooltipView(myContext.getContext());
-        final NestedScrollView scrollParent = findScrollParent(view);
-        if (scrollParent != null) {
-            scrollParent.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    tooltip_view.setTranslationY(tooltip_view.getTranslationY() - (scrollY - oldScrollY));
-                }
-            });
-        }
-    }
-
-    private ViewTooltip(MyContext myContext, View rootView, View view) {
-        this.rootView = rootView;
-        this.view = view;
-        this.tooltip_view = new TooltipView(myContext.getContext());
-        final NestedScrollView scrollParent = findScrollParent(view);
-        if (scrollParent != null) {
-            scrollParent.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    tooltip_view.setTranslationY(tooltip_view.getTranslationY() - (scrollY - oldScrollY));
-                }
-            });
-        }
-    }
+    @IntDef({POSITION_OVERLAY, POSITION_TOOLTIP, POSITION_TARGET})
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface ViwPosition {}
 
     private ViewTooltip(View view) {
-        this(new MyContext(getActivityContext(view.getContext())), view);
+        this(view.getContext(), view);
+    }
+
+    private ViewTooltip(Context context, View view) {
+        this(context, null, view);
+    }
+
+    private ViewTooltip(Context context, View rootView, View view) {
+        this.rootView = rootView;
+        this.view = view;
+        this.tooltip_view = new TooltipView(context);
+        this.overlay = new FrameLayout(context);
+        final NestedScrollView scrollParent = findScrollParent(view);
+        if (scrollParent != null) {
+            scrollParent.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    tooltip_view.setTranslationY(tooltip_view.getTranslationY() - (scrollY - oldScrollY));
+                }
+            });
+        }
+
+        tooltip_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onClickListener != null) onClickListener.onClick(POSITION_TOOLTIP, ViewTooltip.this);
+                if (tooltip_view.clickToHide) {
+                    tooltip_view.remove();
+                }
+            }
+        });
+    }
+
+    private void initTargetClone(){
+        TargetGhostView targetGhostView = new TargetGhostView(view.getContext());
+        targetGhostView.setTarget(view);
+        overlay.addView(targetGhostView);
+        targetGhostView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onClickListener != null) onClickListener.onClick(POSITION_TARGET, ViewTooltip.this);
+            }
+        });
     }
 
     public static ViewTooltip on(final View view) {
-        return new ViewTooltip(new MyContext(getActivityContext(view.getContext())), view);
+        return new ViewTooltip(view);
     }
 
-    public static ViewTooltip on(Fragment fragment, final View view) {
-        return new ViewTooltip(new MyContext(fragment), view);
+    public static ViewTooltip on(Context context, final View view) {
+        return new ViewTooltip(context, view);
     }
 
-    public static ViewTooltip on(Activity activity, final View view) {
-        return new ViewTooltip(new MyContext(getActivityContext(activity)), view);
-    }
-
-    public static ViewTooltip on(Activity activity, final View rootView, final View view) {
-        return new ViewTooltip(new MyContext(getActivityContext(activity)), rootView, view);
+    public static ViewTooltip on(Context context, final View rootView, final View view) {
+        return new ViewTooltip(context, rootView, view);
     }
 
     private NestedScrollView findScrollParent(View view) {
@@ -159,6 +177,27 @@ public class ViewTooltip {
         return this;
     }
 
+    public ViewTooltip overlayColor(@ColorInt int color){
+        overlay.setBackgroundColor(color);
+        initTargetClone();
+        overlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onClickListener != null) onClickListener.onClick(POSITION_OVERLAY, ViewTooltip.this);
+            }
+        });
+        return this;
+    }
+
+    public ViewTooltip onClick(OnClickListener onClickListener){
+        this.onClickListener = onClickListener;
+        return this;
+    }
+
+    public void hide(){
+        tooltip_view.remove();
+    }
+
     public TooltipView show() {
         final Context activityContext = tooltip_view.getContext();
         if (activityContext != null && activityContext instanceof Activity) {
@@ -170,17 +209,16 @@ public class ViewTooltip {
                 @Override
                 public void run() {
                     final Rect rect = new Rect();
-                    final Point offset = new Point();
-                    view.getGlobalVisibleRect(rect, offset);
+                    view.getGlobalVisibleRect(rect);
 
                     int[] location = new int[2];
                     view.getLocationOnScreen(location);
                     rect.left = location[0];
-                    if (offset != null) {
-                        rect.top -= offset.y;
-                    }
+                    //rect.left = location[0];
 
-                    decorView.addView(tooltip_view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    overlay.addView(tooltip_view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                    decorView.addView(overlay, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
                     tooltip_view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                         @Override
@@ -351,6 +389,103 @@ public class ViewTooltip {
         }
     }
 
+    public interface OnClickListener{
+        void onClick(@ViwPosition int position, ViewTooltip view);
+    }
+
+    /**
+     * Target Image View
+     *
+     */
+    private static class TargetGhostView extends AppCompatImageView {
+        private int[] position = new int[4];
+        private int[] size = new int[2];
+
+        public TargetGhostView(Context context) {
+            super(context);
+        }
+
+        private void setLayoutLikeAsView(View target){
+            target.getLocationOnScreen(position);
+            position[2] = position[0] + target.getWidth();
+            position[3] = position[1] + target.getHeight();
+        }
+
+        @Override
+        public void layout(int l, int t, int r, int b) {
+            super.layout(position[0], position[1], position[2], position[3]);
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            super.onMeasure(size[0], size[1]);
+        }
+
+        public void setTarget(View target){
+            if(target == null) return;
+            setLayoutLikeAsView(target);
+            Bitmap bitmap = getBitmapFromView(target);
+            setImageBitmap(bitmap);
+            size[0] = bitmap.getWidth();
+            size[1] = bitmap.getHeight();
+        }
+
+        public static Bitmap createDrawableFromView(Activity activity, View view) {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            view.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+            view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+            view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+            view.buildDrawingCache();
+            Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+
+            Canvas canvas = new Canvas(bitmap);
+            view.draw(canvas);
+
+            return bitmap;
+        }
+
+        public static Bitmap loadBitmapFromView(View v) {
+            if (v.getMeasuredHeight() <= 0) {
+                int specWidth = View.MeasureSpec.makeMeasureSpec(0 /* any */, View.MeasureSpec.UNSPECIFIED);
+                v.measure(specWidth, specWidth);
+                int questionWidth = v.getMeasuredWidth();
+
+                int specHeight = View.MeasureSpec.makeMeasureSpec(0 /* any */, View.MeasureSpec.UNSPECIFIED);
+                v.measure(specHeight, specHeight);
+                int questionHeight = v.getMeasuredHeight();
+
+                v.measure(questionWidth, questionHeight);
+
+                Bitmap b = Bitmap.createBitmap(v.getMeasuredWidth(), v.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+                Canvas c = new Canvas(b);
+                v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+                v.draw(c);
+                return b;
+            }
+
+            Bitmap b = Bitmap.createBitmap( v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(b);
+            v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+            v.draw(c);
+
+
+            return b;
+        }
+
+        public static Bitmap getBitmapFromView(View view) {
+            Bitmap returnedBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(returnedBitmap);
+            Drawable bgDrawable =view.getBackground();
+            if (bgDrawable!=null)
+                bgDrawable.draw(canvas);
+            else
+                canvas.drawColor(Color.WHITE);
+            view.draw(canvas);
+            return returnedBitmap;
+        }
+    }
+
     public static class TooltipView extends FrameLayout {
 
         private static final int MARGIN_SCREEN_BORDER_TOOLTIP = 30;
@@ -359,7 +494,7 @@ public class ViewTooltip {
         private int arrowSourceMargin = 0;
         private int arrowTargetMargin = 0;
         protected View childView;
-        private int color = Color.parseColor("#1F7C82");
+        private int color = 0xff1F7C82;
         private Path bubblePath;
         private Paint bubblePaint;
         private Paint borderPaint;
@@ -387,7 +522,7 @@ public class ViewTooltip {
 
         private Rect viewRect;
         private int distanceWithView = 0;
-        private int shadowColor = Color.parseColor("#aaaaaa");
+        private int shadowColor = 0xffaaaaaa;
 
         public TooltipView(Context context) {
             super(context);
@@ -575,7 +710,7 @@ public class ViewTooltip {
         }
 
         protected void startEnterAnimation() {
-            tooltipAnimation.animateEnter(this, new AnimatorListenerAdapter() {
+            tooltipAnimation.animateEnter((View) this.getParent(), new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
@@ -587,7 +722,7 @@ public class ViewTooltip {
         }
 
         protected void startExitAnimation(final Animator.AnimatorListener animatorListener) {
-            tooltipAnimation.animateExit(this, new AnimatorListenerAdapter() {
+            tooltipAnimation.animateExit((View) this.getParent(), new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
@@ -600,17 +735,6 @@ public class ViewTooltip {
         }
 
         protected void handleAutoRemove() {
-            if (clickToHide) {
-                setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (clickToHide) {
-                            remove();
-                        }
-                    }
-                });
-            }
-
             if (autoHide) {
                 postDelayed(new Runnable() {
                     @Override
@@ -839,8 +963,8 @@ public class ViewTooltip {
 
         public void removeNow() {
             if (getParent() != null) {
-                final ViewGroup parent = ((ViewGroup) getParent());
-                parent.removeView(TooltipView.this);
+                final ViewGroup parent = ((ViewGroup) getParent().getParent());
+                parent.removeView((ViewGroup) TooltipView.this.getParent());
             }
         }
 
@@ -863,52 +987,6 @@ public class ViewTooltip {
         public void setBorderPaint(Paint borderPaint) {
             this.borderPaint = borderPaint;
             postInvalidate();
-        }
-    }
-
-    public static class MyContext {
-        private Fragment fragment;
-        private Context context;
-        private Activity activity;
-
-        public MyContext(Activity activity) {
-            this.activity = activity;
-        }
-
-        public MyContext(Fragment fragment) {
-            this.fragment = fragment;
-        }
-
-        public MyContext(Context context) {
-            this.context = context;
-        }
-
-        public Context getContext() {
-            if (activity != null) {
-                return activity;
-            } else {
-                return ((Context) fragment.getActivity());
-            }
-        }
-
-        public Activity getActivity() {
-            if (activity != null) {
-                return activity;
-            } else {
-                return fragment.getActivity();
-            }
-        }
-
-
-        public Window getWindow() {
-            if (activity != null) {
-                return activity.getWindow();
-            } else {
-                if (fragment instanceof DialogFragment) {
-                    return ((DialogFragment) fragment).getDialog().getWindow();
-                }
-                return fragment.getActivity().getWindow();
-            }
         }
     }
 }

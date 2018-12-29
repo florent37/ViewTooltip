@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.github.florent37.viewtooltip.ViewTooltip;
 
@@ -109,8 +110,15 @@ public class MainActivity extends AppCompatActivity {
                 ViewTooltip
                         .on(v)
                         .color(Color.BLACK)
+                        .overlayColor(0x80000000)
                         .position(ViewTooltip.Position.TOP)
                         .text("bottomRight bottomRight bottomRight")
+                        .onClick(new ViewTooltip.OnClickListener() {
+                            @Override
+                            public void onClick(int position, ViewTooltip view) {
+                                view.hide();
+                            }
+                        })
                         .show();
             }
         });
@@ -121,8 +129,27 @@ public class MainActivity extends AppCompatActivity {
                 ViewTooltip
                         .on(v)
                         .color(Color.BLACK)
+                        .overlayColor(0x80000000)
                         .position(ViewTooltip.Position.TOP)
                         .text("bottomLeft bottomLeft bottomLeft")
+                        .onClick(new ViewTooltip.OnClickListener() {
+                            @Override
+                            public void onClick(int position, ViewTooltip view) {
+                                switch (position){
+                                    case ViewTooltip.POSITION_OVERLAY:
+                                        view.hide();
+                                        Toast.makeText(getBaseContext(), "Clicked on Overlay", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case ViewTooltip.POSITION_TOOLTIP:
+                                        view.hide();
+                                        Toast.makeText(getBaseContext(), "Clicked on Tooltip", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case ViewTooltip.POSITION_TARGET:
+                                        Toast.makeText(getBaseContext(), "Clicked on Target", Toast.LENGTH_SHORT).show();
+                                        break;
+                                }
+                            }
+                        })
                         .show();
             }
         });
