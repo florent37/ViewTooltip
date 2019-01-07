@@ -24,5 +24,5 @@ ext{
     sourceCompatibilityVersion = JavaVersion.VERSION_1_8
     targetCompatibilityVersion = JavaVersion.VERSION_1_8
 
-    libraryVersion = "1.2.0"
+    libraryVersion = "1.2.1"
 }
