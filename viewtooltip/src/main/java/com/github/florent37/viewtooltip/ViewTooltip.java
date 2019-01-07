@@ -170,14 +170,20 @@ public class ViewTooltip {
                 @Override
                 public void run() {
                     final Rect rect = new Rect();
-                    final Point offset = new Point();
-                    view.getGlobalVisibleRect(rect, offset);
+                    view.getGlobalVisibleRect(rect);
+
+                    final Rect rootGlobalRect = new Rect();
+                    final Point rootGlobalOffset = new Point();
+                    rootView.getGlobalVisibleRect(rootGlobalRect, rootGlobalOffset);
 
                     int[] location = new int[2];
                     view.getLocationOnScreen(location);
                     rect.left = location[0];
-                    if (offset != null) {
-                        rect.top -= offset.y;
+                    if (rootGlobalOffset != null) {
+                        rect.top -= rootGlobalOffset.y;
+                        rect.bottom -= rootGlobalOffset.y;
+                        rect.left -= rootGlobalOffset.x;
+                        rect.right -= rootGlobalOffset.x;
                     }
 
                     decorView.addView(tooltip_view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
