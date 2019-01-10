@@ -174,7 +174,7 @@ public class ViewTooltip {
 
                     final Rect rootGlobalRect = new Rect();
                     final Point rootGlobalOffset = new Point();
-                    rootView.getGlobalVisibleRect(rootGlobalRect, rootGlobalOffset);
+                    decorView.getGlobalVisibleRect(rootGlobalRect, rootGlobalOffset);
 
                     int[] location = new int[2];
                     view.getLocationOnScreen(location);
