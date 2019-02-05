@@ -235,10 +235,7 @@ public class ViewTooltip {
     }
 
     public ViewTooltip padding(int left, int top, int right, int bottom) {
-        this.tooltip_view.paddingTop = top;
-        this.tooltip_view.paddingBottom = bottom;
-        this.tooltip_view.paddingLeft = left;
-        this.tooltip_view.paddingRight = right;
+        this.tooltip_view.setPadding(left, top, right, bottom);
         return this;
     }
 
@@ -383,11 +380,6 @@ public class ViewTooltip {
 
         private int corner = 30;
 
-        private int paddingTop = 20;
-        private int paddingBottom = 30;
-        private int paddingRight = 30;
-        private int paddingLeft = 30;
-
         int shadowPadding = 4;
         int shadowWidth = 8;
 
@@ -438,23 +430,27 @@ public class ViewTooltip {
             setLayerType(LAYER_TYPE_SOFTWARE, paint);
             postInvalidate();
         }
+        
+        @Override
+        public void setPadding(final int left, final int top, final int right, final int bottom) {
+            switch (position) {
+                case TOP:
+                    super.setPadding(left, top, right, bottom + arrowHeight);
+                    break;
+                case BOTTOM:
+                    super.setPadding(left, top + arrowHeight, right, bottom);
+                    break;
+                case LEFT:
+                    super.setPadding(left, top, right + arrowHeight, bottom);
+                    break;
+                case RIGHT:
+                    super.setPadding(left + arrowHeight, top, right, bottom);
+                    break;
+            }
+        }
 
         public void setPosition(Position position) {
             this.position = position;
-            switch (position){
-                case TOP:
-                    setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom + arrowHeight);
-                    break;
-                case BOTTOM:
-                    setPadding(paddingLeft, paddingTop + arrowHeight, paddingRight, paddingBottom);
-                    break;
-                case LEFT:
-                    setPadding(paddingLeft, paddingTop, paddingRight + arrowHeight, paddingBottom);
-                    break;
-                case RIGHT:
-                    setPadding(paddingLeft + arrowHeight, paddingTop, paddingRight, paddingBottom);
-                    break;
-            }
             postInvalidate();
         }
 
