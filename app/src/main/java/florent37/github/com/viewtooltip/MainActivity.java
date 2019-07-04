@@ -124,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
                         .position(ViewTooltip.Position.TOP)
                         .text("bottomLeft bottomLeft bottomLeft")
                         .show();
+                DialogFragmentInfo d = new DialogFragmentInfo();
+                d.show(MainActivity.this.getSupportFragmentManager(), "");
             }
         });
     }
