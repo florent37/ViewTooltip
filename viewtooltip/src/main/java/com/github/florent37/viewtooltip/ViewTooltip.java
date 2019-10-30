@@ -277,6 +277,11 @@ public class ViewTooltip {
         return this;
     }
 
+    public ViewTooltip margin(int left, int top, int right, int bottom) {
+        this.tooltip_view.setMargin(left, top, right, bottom);
+        return this;
+    }
+
     public ViewTooltip setTextGravity (int textGravity) {
         this.tooltip_view.setTextGravity(textGravity);
         return this;
@@ -388,6 +393,11 @@ public class ViewTooltip {
         private int paddingRight = 30;
         private int paddingLeft = 30;
 
+        private int marginTop = 0;
+        private int marginBottom = 0;
+        private int marginRight = 0;
+        private int marginLeft = 0;
+
         int shadowPadding = 4;
         int shadowWidth = 8;
 
@@ -430,6 +440,16 @@ public class ViewTooltip {
 
         public void setShadowColor(int color) {
             this.shadowColor = color;
+            postInvalidate();
+        }
+
+        public void setMargin(int left, int top, int right, int bottom) {
+            this.marginLeft = left;
+            this.marginTop = top;
+            this.marginRight = right;
+            this.marginBottom = top;
+
+            childView.setPadding(childView.getPaddingLeft() + left, childView.getPaddingTop() + top, childView.getPaddingRight() + right, childView.getPaddingBottom() + bottom);
             postInvalidate();
         }
 
@@ -688,10 +708,10 @@ public class ViewTooltip {
             bottomLeftDiameter = bottomLeftDiameter < 0 ? 0 : bottomLeftDiameter;
             bottomRightDiameter = bottomRightDiameter < 0 ? 0 : bottomRightDiameter;
 
-            final float spacingLeft = this.position == Position.RIGHT ? arrowHeight : 0;
-            final float spacingTop = this.position == Position.BOTTOM ? arrowHeight : 0;
-            final float spacingRight = this.position == Position.LEFT ? arrowHeight : 0;
-            final float spacingBottom = this.position == Position.TOP ? arrowHeight : 0;
+            final float spacingLeft = this.position == Position.RIGHT ? arrowHeight : marginLeft;
+            final float spacingTop = this.position == Position.BOTTOM ? arrowHeight : marginTop;
+            final float spacingRight = this.position == Position.LEFT ? arrowHeight : marginRight;
+            final float spacingBottom = this.position == Position.TOP ? arrowHeight : marginBottom;
 
             final float left = spacingLeft + myRect.left;
             final float top = spacingTop + myRect.top;
