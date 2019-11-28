@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ViewTooltip
                         .on(editText)
+                        .margin(50, 0, 50, 0)
                         .position(ViewTooltip.Position.TOP)
                         .text(getResources().getString(R.string.lorem))
                         .show();
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                         .arrowHeight(0)
                         .arrowWidth(0)
                         .padding(20, 20, 20, 20)
+                        .margin(50, 0, 50, 0)
                         .position(ViewTooltip.Position.BOTTOM)
                         .align(ViewTooltip.ALIGN.START)
                         .text(getResources().getString(R.string.lorem))
