@@ -21,6 +21,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -39,9 +40,10 @@ public class ViewTooltip {
     private View rootView;
     private final View view;
     private final TooltipView tooltip_view;
-
+    private MyContext myContext;
     private ViewTooltip(MyContext myContext, View view) {
         this.view = view;
+        this.myContext = myContext;
         this.tooltip_view = new TooltipView(myContext.getContext());
         final NestedScrollView scrollParent = findScrollParent(view);
         if (scrollParent != null) {
@@ -164,8 +166,8 @@ public class ViewTooltip {
         if (activityContext != null && activityContext instanceof Activity) {
             final ViewGroup decorView = rootView != null ?
                     (ViewGroup) rootView :
-                    (ViewGroup) ((Activity) activityContext).getWindow().getDecorView();
-
+//                    (ViewGroup) ((Activity) activityContext).getWindow().getDecorView();
+                    (ViewGroup) myContext.getWindow().getDecorView();
             view.postDelayed(new Runnable() {
                 @Override
                 public void run() {
